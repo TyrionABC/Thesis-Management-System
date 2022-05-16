@@ -46,6 +46,7 @@ const useStore = create(set => ({
 
 function App() {
   let { state } = useLocation();
+  if(state === null) window.location.replace("/");
   let permission = state['permission'];
   let Username = state['name'];
   if(permission !== 'allowed' || Username.length === 0) {
