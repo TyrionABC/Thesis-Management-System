@@ -3,6 +3,7 @@ package com.controller;
 import com.dao.UserMapper;
 import com.domain.User;
 import com.service.UserService;
+import org.apache.ibatis.jdbc.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -32,17 +33,23 @@ public class UserController {
     public String register(){
         return "admin/register";
     }
+
+//    public String Login(@RequestParam(value = "userId") String userId, @RequestParam(value = "password") String password,
+//                        HttpSession session, RedirectAttributes attributes)
+    @CrossOrigin
     @PostMapping("/login")
-    public String Login(@RequestParam(value = "userId") String userId, @RequestParam(value = "password") String password,
-                        HttpSession session, RedirectAttributes attributes){
-        User user=userService.selectUserByUserIdAndPassword(userId,password);
+    @ResponseBody
+    public String Login(@RequestBody User user1,HttpSession session, RedirectAttributes attributes){
+        User user=userService.selectUserByUserIdAndPassword(user1.getUserId(),user1.getPassword());
+        System.out.println(user1);
         if (user != null){
             user.setPassword(null);
             session.setAttribute("user", user);
-            return "admin/index";
+            attributes.addFlashAttribute("message", "true");
+            return "true";
         } else{
-            attributes.addFlashAttribute("message", "用户名和密码错误");//随着重定向，将错误信息传递到页面
-            return "redirect:/users";
+            attributes.addFlashAttribute("message", "false");//随着重定向，将错误信息传递到页面
+            return "false";
         }
     }
     @PostMapping("/register")

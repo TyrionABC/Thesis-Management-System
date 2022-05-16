@@ -11,12 +11,12 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
     public User selectUserByUserIdAndPassword(String userId, String password) {
-        User user=userMapper.selectUserByIdAndPassword(userId,MD5Utils.code(password));
+        User user=userMapper.selectUserByIdAndPassword(userId,password);
         if(user==null) {
             return null;
         }
         else {
-            if (user.getPassword().equals(MD5Utils.code(password))) {
+            if (user.getPassword().equals(password)) {
                 return user;
             }
             else{
