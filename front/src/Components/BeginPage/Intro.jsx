@@ -53,8 +53,7 @@ function Navi() {
     // 密码账号验证， 发送 formValue 数据
     let psw = CryptoJS.MD5(formValue['password']).toString();
     // 验证
-    let value =
-      {
+    let value = {
         userId: formValue['email'],
         password: psw,
       };

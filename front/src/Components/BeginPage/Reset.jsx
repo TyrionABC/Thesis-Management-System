@@ -3,6 +3,7 @@ import {Button, Schema, Form, FlexboxGrid, ButtonToolbar } from "rsuite";
 import "rsuite/dist/rsuite.min.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CryptoJS from "crypto-js";
+import axios from 'axios';
 
 const code = Math.random().toString().slice(-6);
 
@@ -70,13 +71,24 @@ const Reset = () => {
       alert("输入有误!");
       return;
     }
-    const secretKey = '_dbproj123liucuima765321_@#'; // 密钥
-    let psw = CryptoJS.AES.encrypt(formValue['password'], secretKey).toString(); // AES 加密
-
-    // 修改密码
-
-    alert("修改成功!");
-    window.history.go(-1);
+    let psw = CryptoJS.MD5(formValue['password']).toString(); // AES 加密
+    let value = {
+      userId: formValue['email'],
+      password: psw,
+      username: formValue['name'],
+    }
+    axios.post('http://localhost:8080/admin/register', value)
+        .then(function(response) {
+          console.log('response: ', response);
+          const success = response['data'];
+          if(success) {
+            alert("注册成功!");
+            window.history.go(-1);
+          }
+          else {
+            alert("注册失败, 请重试!");
+          }
+        }).catch(err => console.log(err))
   };
 
   const handleCheckEmail = (e) => {
