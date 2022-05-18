@@ -1,11 +1,10 @@
 package com.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.domain.Comment;
-import com.domain.Paper_Basic_info;
-import com.domain.Paper_publish;
-import com.domain.Query;
+import com.domain.*;
 import com.service.*;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -55,11 +54,30 @@ public class PaperController {
     }
     //查找论文，⽀持按照研究⽅向、论⽂标题、论⽂类型、论⽂摘要模糊查询、作者、发布⼈、会议等条件筛选或查询，以及组合查询
     //列表查询结果⽀持分页、排序
+    @CrossOrigin
     @PostMapping("/select")
-    public String select(@RequestBody Query query,Model model){
-        List<Paper_Basic_info> papers=paperService.selectPapersByConditions(query);
+    @ResponseBody
+    public JSONArray select(@RequestBody Query query, Model model){
+        List<Paper> papers=paperService.selectPapersByConditions(query);
+        JSONArray json = new JSONArray();
+        for(Paper paper : papers){
+            JSONObject jo = new JSONObject();
+            jo.put("id", paper.getId());
+            jo.put("literatureLink", paper.getLiteratureLink());
+            jo.put("overview",paper.getOverview());
+            jo.put("path",paper.getPath());
+            jo.put("publisher",paper.getPublisher());
+            jo.put("publisherId",paper.getPublisherId());
+            jo.put("publishMeeting",paper.getPublishMeeting());
+            jo.put("thesisDate",paper.getThesisDate());
+            jo.put("thesisType",paper.getThesisType());
+            jo.put("title",paper.getTitle());
+            jo.put("writereName",paper.getWriterName());
+            json.add(jo);
+        }
+        System.out.println(json);
         model.addAttribute("papers",papers);
-        return "admin/paper";
+        return json;
     }
     //查询某篇论文详细信息，包括笔记、评论和其他信息。
     public String getDetails(Model model){

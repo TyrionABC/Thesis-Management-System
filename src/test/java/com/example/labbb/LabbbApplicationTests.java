@@ -208,13 +208,13 @@ class LabbbApplicationTests {
     @Test
     void selectPapersByConditions(){
         Query query = new Query();
-        //query.setUserName("Tyrion");
+        //query.setUserName("tyrion");
         //query.setName("tyrion");
-        //query.setPublishMeeting("三和会议");
-        query.setOverview("app");
-        query.setTitle("到的Page类");
-        query.setThesisType("s");
-        query.setDirectionName("sp");
+        query.setPublishMeeting("上海会议");
+        //query.setOverview("app");
+        //query.setTitle("到的Page类");
+        //query.setThesisType("s");
+        //query.setDirectionName("sp");
         System.out.println(paperMapper.getPapersByConditions(query));
     }
     @Test
@@ -239,4 +239,5 @@ class LabbbApplicationTests {
     void getAllComments(){
         System.out.println(commentService.selectAll("0"));
     }
+
 }

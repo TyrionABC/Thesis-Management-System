@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.dao.PaperMapper;
+import com.domain.Paper;
 import com.domain.Direction;
 import com.domain.Paper_Basic_info;
 import com.domain.Query;
@@ -82,7 +83,7 @@ public class PaperServiceImp implements PaperService{
     }
 
     @Override
-    public List<Paper_Basic_info> selectPapersByConditions(Query query) {
+    public List<Paper> selectPapersByConditions(Query query) {
         return paperMapper.getPapersByConditions(query);
     }
 }

@@ -1,13 +1,9 @@
 package com.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.domain.Paper_Basic_info;
+import com.domain.*;
 //import com.domain.Query;
-import com.domain.Query;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -21,8 +17,16 @@ public interface PaperMapper extends BaseMapper<Paper_Basic_info> {
 //    2.使用数据库函数 concat:concat 属于数据库函数，MySQL 和 Oracle 都支持，用于字符串连接，而且可以使用 # 作为占位符，防止 SQL 注入,
 //      但是有些公司并不推荐使用数据库函数，因为可能会切换数据库
 //    3.使用 Mybatis 的动态 sql 标签
+    //论文标题
+//研究方向
+//论文类型
+//论文摘要
+//作者
+//发布人
+//会议
     @Select({"<script>" +
             "select * from paper_basic_info left join belong on paper_basic_info.id=belong.id " +
+            "left join direction on belong.direction_name=direction.direction_name " +
             "left join note_and_extra_file on paper_basic_info.id=note_and_extra_file.id " +
             "left join paper_publish on paper_basic_info.id=paper_publish.id " +
             "left join writer on paper_basic_info.id=writer.id " +
@@ -37,7 +41,25 @@ public interface PaperMapper extends BaseMapper<Paper_Basic_info> {
             "<if test='query.userName!=null'>and user.name=#{query.userName}</if>" +
             "</where>" +
             "</script>"})
-    List<Paper_Basic_info> getPapersByConditions(@Param("query") Query query);
+    List<Paper> getPapersByConditions(@Param("query") Query query);
+    @Select({"<script>" +
+            "select * from paper_basic_info left join belong on paper_basic_info.id=belong.id " +
+            "left join direction on belong.direction_name=direction.direction_name " +
+            "left join note_and_extra_file on paper_basic_info.id=note_and_extra_file.id " +
+            "left join paper_publish on paper_basic_info.id=paper_publish.id " +
+            "left join writer on paper_basic_info.id=writer.id " +
+            "left join user on paper_basic_info.publisher_id=user.user_id " +
+            "<where>" +
+            "<if test='query.directionName!=null'>belong.direction_name like concat('%',#{query.directionName},'%')</if>" +
+            "<if test='query.title!=null'>and paper_basic_info.title like concat('%',#{query.title},'%')</if>" +
+            "<if test='query.thesisType!=null'>and paper_basic_info.thesis_type like concat('%',#{query.thesisType},'%')</if>" +
+            "<if test='query.overview!=null'>and note_and_extra_file.overview like concat('%',#{query.overview},'%')</if>" +
+            "<if test='query.publishMeeting!=null'>and paper_publish.publish_meeting=#{query.publishMeeting}</if>" +
+            "<if test='query.name!=null'>and writer.writer_name=#{query.name}</if>" +
+            "<if test='query.userName!=null'>and user.name=#{query.userName}</if>" +
+            "</where>" +
+            "</script>"})
+    List<Paper> getPapersByCondition(@Param("query") Query query);
 
     @Select("select * from paper_basic_info where id=#{id}")
     Paper_Basic_info selectPaperById(String id);

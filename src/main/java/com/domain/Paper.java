@@ -1,0 +1,128 @@
+package com.domain;
+
+
+import com.baomidou.mybatisplus.annotation.TableField;
+
+//        研究方向
+//        论文摘要
+//        作者
+//        发布人
+//        会议
+public class Paper {
+    String id;
+    String literatureLink;
+    String publisherId;
+    String thesisDate;
+    String thesisType;
+    String title;
+    String path;
+    String overview;
+    String writerName;
+    String publishMeeting;
+    String publisher;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getLiteratureLink() {
+        return literatureLink;
+    }
+
+    public void setLiteratureLink(String literatureLink) {
+        this.literatureLink = literatureLink;
+    }
+
+    public String getPublisherId() {
+        return publisherId;
+    }
+
+    public void setPublisherId(String publisherId) {
+        this.publisherId = publisherId;
+    }
+
+    public String getThesisDate() {
+        return thesisDate;
+    }
+
+    public void setThesisDate(String thesisDate) {
+        this.thesisDate = thesisDate;
+    }
+
+    public String getThesisType() {
+        return thesisType;
+    }
+
+    public void setThesisType(String thesisType) {
+        this.thesisType = thesisType;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public void setOverview(String overview) {
+        this.overview = overview;
+    }
+
+    public String getWriterName() {
+        return writerName;
+    }
+
+    public void setWriterName(String writerName) {
+        this.writerName = writerName;
+    }
+
+    public String getPublishMeeting() {
+        return publishMeeting;
+    }
+
+    public void setPublishMeeting(String publishMeeting) {
+        this.publishMeeting = publishMeeting;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    @Override
+    public String toString() {
+        return "Paper{" +
+                "id='" + id + '\'' +
+                ", literatureLink='" + literatureLink + '\'' +
+                ", publisherId='" + publisherId + '\'' +
+                ", thesisDate='" + thesisDate + '\'' +
+                ", thesisType='" + thesisType + '\'' +
+                ", title='" + title + '\'' +
+                ", path='" + path + '\'' +
+                ", overview='" + overview + '\'' +
+                ", writerName='" + writerName + '\'' +
+                ", publishMeeting='" + publishMeeting + '\'' +
+                ", publisher='" + publisher + '\'' +
+                '}';
+    }
+}

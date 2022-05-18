@@ -30,6 +30,7 @@ import { BasicInfoSet } from "./Info";
 import './App.css';
 import { Link } from 'react-router-dom';
 import { useLocation } from "react-router";
+import axios from "axios";
 
 const useStore = create(set => ({
   id: 101010,
@@ -126,36 +127,35 @@ function SearchResult(props) {
       breadcrumbName: '搜索结果',
     }
   ];
+  console.log(data);
+  let arr = Array.from(data);
   return <>
     <PageHeader style={{background: '#fff'}} title="搜索结果" breadcrumb={{ routes }}>
       <Descriptions>
-        <Descriptions.Item label="搜索结果总数">{ data.length }</Descriptions.Item>
+        <Descriptions.Item label="搜索结果总数">{ arr.length }</Descriptions.Item>
       </Descriptions>
     </PageHeader>
-    <Table dataSource={data}>
+    <Table dataSource={arr}>
       <ColumnGroup title="基本信息">
         <Column title="ID" dataIndex="id" key="id" />
         <Column title="标题" dataIndex="title" key="title" />
-        <Column title="作者" dataIndex="writer" key="writer" />
+        <Column title="作者" dataIndex="writerName" key="writerName" />
         <Column
             title="研究方向"
-            dataIndex="direction"
-            key="direction"
-            render={tags => (
-                <>
-                  {tags.map(tag => (
+            dataIndex="path"
+            key="path"
+            render={(tag => (
                       <Tag color="blue" key={tag}>
                         {tag}
                       </Tag>
-                  ))}
-                </>
+                  )
             )}
         />
-        <Column title="类型" dataIndex="type" key="type" />
+        <Column title="类型" dataIndex="thesisType" key="thesisType" />
       </ColumnGroup>
       <ColumnGroup title="发布">
-        <Column title="发布人" dataIndex="publish" key="publish" />
-        <Column title="发布会议" dataIndex="meeting" key="meeting" />
+        <Column title="发布人" dataIndex="publisher" key="publisher" />
+        <Column title="发布会议" dataIndex="publishMeeting" key="publishMeeting" />
       </ColumnGroup>
       <Column
           title="操作"
@@ -172,32 +172,21 @@ function SearchResult(props) {
 
 const InnerForm = () => {
   const onFinish = (values: any) => {
-    if(!values['title'] && !values['direction'] && !values['type']
-        && !values['abstract'] && !values['writer'] && !values['publish']
-        && !values['meeting']) alert("搜索条件不能全为空!");
+    if(!values['title'] && !values['path'] && !values['thesisType']
+        && !values['overview'] && !values['writerName'] && !values['publisher']
+        && !values['publishMeeting']) alert("搜索条件不能全为空!");
     console.log('Success:', values);
     // 向后端请求论文列表, 接收论文列表
-    const data = [
-      {
-        id: '10101',
-        title: 'Thesis_1',
-        writer: 'John',
-        direction: ['ML', 'FE'],
-        type: '研究型',
-        publish: 'Root',
-        meeting: '第2次会议',
-      },
-      {
-        id: '12321',
-        title: 'Thesis_2',
-        writer: 'Jack',
-        direction: ['FE', 'DL'],
-        type: '研究型',
-        publish: 'Root',
-        meeting: '第3次会议',
-      },
-    ];
-    contents[7] = <SearchResult lists={data}/>;
+    let list = [];
+    axios.post('http://localhost:8080/admin/select', values)
+        .then(function (response) {
+          list.push(response.data[0]);
+          console.log(list);
+          if(response === null) alert('搜索结果为空');
+          else contents[7] = <SearchResult lists={list}/>;
+        })
+        .catch(err => console.log(err));
+
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -222,19 +211,19 @@ const InnerForm = () => {
         </Form.Item>
         <Form.Item
             label="研究方向"
-            name="direction"
+            name="path"
         >
           <Input />
         </Form.Item>
         <Form.Item
             label="论文类型"
-            name="type"
+            name="thesisType"
         >
           <Input />
         </Form.Item>
         <Form.Item
             label="论文摘要"
-            name="abstract"
+            name="overview"
         >
           <Input />
         </Form.Item>
@@ -246,13 +235,13 @@ const InnerForm = () => {
         </Form.Item>
         <Form.Item
             label="发布人"
-            name="publish"
+            name="publisher"
         >
           <Input />
         </Form.Item>
         <Form.Item
             label="会议"
-            name="meeting"
+            name="publishMeeting"
         >
           <Input />
         </Form.Item>

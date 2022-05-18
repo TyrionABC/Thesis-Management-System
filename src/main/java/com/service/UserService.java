@@ -28,7 +28,7 @@ public class UserService {
         return userMapper.selectUserById(userId);
     }
     public void insertUser(User user){
-        user.setPassword(MD5Utils.code(user.getPassword()));//加密
+        //user.setPassword(MD5Utils.code(user.getPassword()));//加密
         userMapper.insert(user);
     }
     public void deleteUserByUserId(String userId){

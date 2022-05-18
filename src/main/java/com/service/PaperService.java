@@ -1,6 +1,7 @@
 package com.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.domain.Paper;
 import com.domain.Paper_Basic_info;
 import com.domain.Query;
 
@@ -15,5 +16,5 @@ public interface PaperService {
     Paper_Basic_info selectPaperByTitle(String title);
     List<Paper_Basic_info> selectAll();
     Map<String,Object> selectPage(int page, int size, QueryWrapper<Paper_Basic_info> queryWrapper);
-    List<Paper_Basic_info> selectPapersByConditions(Query query);
+    List<Paper> selectPapersByConditions(Query query);
 }

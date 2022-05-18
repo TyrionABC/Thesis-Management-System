@@ -57,7 +57,7 @@ function Navi() {
         userId: formValue['email'],
         password: psw,
       };
-    axios.post('http://localhost:8080/users/login', value)
+    axios.post('http://localhost:8080/admin/login', value)
         .then(function (response) {
           console.log("response: ", response);
           const correct = response['data'];
