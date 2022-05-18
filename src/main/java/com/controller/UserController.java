@@ -81,5 +81,15 @@ public class UserController {
         session.removeAttribute("user");
         return "redirect:/users";
     }
+    @PostMapping("/update")
+    @ResponseBody
+    public String updateInfo(@RequestBody User user1){
+        if (userService.selectUserById(user1.getUserId()).getPassword()==user1.getPassword()
+                &&userService.selectUserById(user1.getUserId()).getName()==user1.getName())
+            return "false";
+        else
+        userService.updateUser(user1);
+        return "true";
+    }
 
 }

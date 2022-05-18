@@ -17,4 +17,5 @@ public interface PaperService {
     List<Paper_Basic_info> selectAll();
     Map<String,Object> selectPage(int page, int size, QueryWrapper<Paper_Basic_info> queryWrapper);
     List<Paper> selectPapersByConditions(Query query);
+    List<Paper> selectMyPapers(String userId);
 }

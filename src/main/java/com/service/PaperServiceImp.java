@@ -86,4 +86,9 @@ public class PaperServiceImp implements PaperService{
     public List<Paper> selectPapersByConditions(Query query) {
         return paperMapper.getPapersByConditions(query);
     }
+
+    @Override
+    public List<Paper> selectMyPapers(String userId) {
+        return paperMapper.getMyPapers(userId);
+    }
 }

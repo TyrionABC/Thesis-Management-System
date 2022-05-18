@@ -206,16 +206,8 @@ class LabbbApplicationTests {
         System.out.println(commentService.selectAll("0"));
     }
     @Test
-    void selectPapersByConditions(){
-        Query query = new Query();
-        //query.setUserName("tyrion");
-        //query.setName("tyrion");
-        query.setPublishMeeting("上海会议");
-        //query.setOverview("app");
-        //query.setTitle("到的Page类");
-        //query.setThesisType("s");
-        //query.setDirectionName("sp");
-        System.out.println(paperMapper.getPapersByConditions(query));
+    void selectMyPapers(){
+        System.out.println(paperMapper.getMyPapers("1216776075"));
     }
     @Test
     void updatePublish(){
@@ -236,8 +228,9 @@ class LabbbApplicationTests {
         System.out.println(commentMapper.selectReplies("2357e838-c"));
     }
     @Test
-    void getAllComments(){
-        System.out.println(commentService.selectAll("0"));
+    void getMyNotes(){
+        System.out.println(noteAndFileService.selectMyNotes("1216776075"));
     }
+
 
 }

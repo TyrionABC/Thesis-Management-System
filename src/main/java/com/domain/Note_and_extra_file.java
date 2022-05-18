@@ -3,6 +3,8 @@ package com.domain;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 
+import java.util.Arrays;
+
 @TableName("note_and_extra_file")
 public class Note_and_extra_file {
     private String id;
@@ -53,5 +55,16 @@ public class Note_and_extra_file {
 
     public void setPublisherId(String publisherId) {
         this.publisherId = publisherId;
+    }
+
+    @Override
+    public String toString() {
+        return "Note_and_extra_file{" +
+                "id='" + id + '\'' +
+                ", publisherId='" + publisherId + '\'' +
+                ", overview='" + overview + '\'' +
+                ", note='" + note + '\'' +
+                ", extraFile=" + Arrays.toString(extraFile) +
+                '}';
     }
 }

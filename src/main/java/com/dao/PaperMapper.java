@@ -50,16 +50,10 @@ public interface PaperMapper extends BaseMapper<Paper_Basic_info> {
             "left join writer on paper_basic_info.id=writer.id " +
             "left join user on paper_basic_info.publisher_id=user.user_id " +
             "<where>" +
-            "<if test='query.directionName!=null'>belong.direction_name like concat('%',#{query.directionName},'%')</if>" +
-            "<if test='query.title!=null'>and paper_basic_info.title like concat('%',#{query.title},'%')</if>" +
-            "<if test='query.thesisType!=null'>and paper_basic_info.thesis_type like concat('%',#{query.thesisType},'%')</if>" +
-            "<if test='query.overview!=null'>and note_and_extra_file.overview like concat('%',#{query.overview},'%')</if>" +
-            "<if test='query.publishMeeting!=null'>and paper_publish.publish_meeting=#{query.publishMeeting}</if>" +
-            "<if test='query.name!=null'>and writer.writer_name=#{query.name}</if>" +
-            "<if test='query.userName!=null'>and user.name=#{query.userName}</if>" +
+            "paper_basic_info.publisher_id=#{userId}" +
             "</where>" +
             "</script>"})
-    List<Paper> getPapersByCondition(@Param("query") Query query);
+    List<Paper> getMyPapers(@Param("userId") String userId);
 
     @Select("select * from paper_basic_info where id=#{id}")
     Paper_Basic_info selectPaperById(String id);
@@ -69,6 +63,7 @@ public interface PaperMapper extends BaseMapper<Paper_Basic_info> {
 
     @Select("select * from paper_basic_info where title=#{title}")
     Paper_Basic_info selectPaperByTitle(String title);
+
 
 
 }

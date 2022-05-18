@@ -5,6 +5,7 @@ import "rsuite/dist/rsuite.min.css";
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
 import './Thesis.css';
+import axios from 'axios';
 
 const latestInfo = [{
   id: 1,
@@ -328,7 +329,8 @@ const myWord = [
     researchDirection: 'ML',
     meeting: 'Meeting_3',
   },
-]
+];
+
 
 export class MyThesis extends React.Component {
   render () {
