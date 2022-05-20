@@ -38,7 +38,6 @@ const useStore = create(set => ({
   state: 'unallowed',
   email: '',
   contentNum: 0,
-  image: "https://images.pexels.com/photos/4428279/pexels-photo-4428279.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
   changeContentNum: (num) => set(state => ({ contentNum: num })),
   changeState: (state) => set(state => ({ state: state })),
   changeName: (name) => set(state => ({ name: name })),

@@ -1,6 +1,5 @@
 import React from 'react';
-import {Button, Form, Input, PageHeader, Select, Upload, message, Tabs } from 'antd';
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import {Button, Form, Input, PageHeader, Select, Tabs } from 'antd';
 import 'antd/dist/antd.css';
 import create from "zustand";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -24,89 +23,19 @@ const userInfo = create(set => ({
   changeId: (idn) => set(state => ({ id: idn })),
 }));
 
-function getQueryVariable(variable)
-{
-  var query = window.location.search.substring(1);
-  var vars = query.split("&");
-  for (var i=0;i<vars.length;i++) {
-    var pair = vars[i].split("=");
-    if(pair[0] === variable){return pair[1];}
-  }
-  return false;
-}
-
-function getBase64(img, callback) {
-  const reader = new FileReader();
-  reader.addEventListener('load', () => callback(reader.result));
-  reader.readAsDataURL(img);
-}
-
-function beforeUpload(file) {
-  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-  if (!isJpgOrPng) {
-    message.error('You can only upload JPG/PNG file!');
-  }
-  const isLt2M = file.size / 1024 / 1024 < 2;
-  if (!isLt2M) {
-    message.error('Image must smaller than 2MB!');
-  }
-  return isJpgOrPng && isLt2M;
-}
-
-class MyAvatar extends React.Component {
-  state = {
-    loading: false,
-    imageUrl: true,
-  };
-
-  handleChange = info => {
-    if (info.file.status === 'uploading') {
-      this.setState({ loading: true });
-      return;
-    }
-    if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj, imageUrl =>
-          this.setState({
-            imageUrl, loading: false,
-          }),
-      );
-    }
-  };
-
-  render() {
-    const { loading, imageUrl } = this.state;
-    const uploadButton = (
-        <div>
-          {loading ? <LoadingOutlined /> : <PlusOutlined />}
-          <div style={{ marginTop: 8 }}>Upload</div>
-        </div>
-    );
-    return (
-        <Upload
-            name="avatar"
-            listType="picture-card"
-            className="avatar-uploader"
-            // 添加图片更新地址
-            showUploadList={false}
-            beforeUpload={beforeUpload}
-            onChange={this.handleChange}
-        >
-          {imageUrl ? <img src={ this.props.image } alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-        </Upload>
-    );
-  }
-}
-
-const BasicSet = () => {
+const BasicSet = (id) => {
   const onFinish = (values: any) => {
     console.log('Success:', values);
+    axios.post('', values)
+        .then(function (response) {
+          console.log(response);
+        })
   };
 
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
-  // 向后端提交，进行更新
+
   return (
       <Form
           name="basic"
@@ -117,9 +46,6 @@ const BasicSet = () => {
           onFinishFailed={onFinishFailed}
           autoComplete="off"
       >
-        <Form.Item label="头像" name="picture">
-          <MyAvatar image={userInfo(state => state.image)}/>
-        </Form.Item>
 
         <Form.Item
             label="用户名"
@@ -177,10 +103,15 @@ const BasicSet = () => {
   );
 };
 
-const PrivacySet = () => {
+const PrivacySet = (id) => {
   // 根据 id 获取用户信息, userInfo(state => state.id);
   const onFinish = (values: any) => {
     console.log('Success:', values);
+    axios.post('', values)
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(err => console.log(err));
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -272,16 +203,17 @@ export function BasicInfoSet(props) {
     <Tabs tabPosition={'left'}>
       <TabPane tab="基本设置" key="1">
         <PageHeader title="基本设置"/>
-        <BasicSet />
+        <BasicSet id={id}/>
       </TabPane>
       <TabPane tab="隐私设置" key="2">
         <PageHeader title="修改密码"/>
-        <PrivacySet />
+        <PrivacySet id={id}/>
       </TabPane>
 
     </Tabs>
   </div>
-  axios.post('', id)
+
+  axios.post('', values)
       .then(function (response) {
         ChangeInfo(response);
         return item;
