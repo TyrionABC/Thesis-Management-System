@@ -56,45 +56,28 @@ function App() {
   let mail = state['email'];
 
   // 根据email获取用户信息
+  let value = {
+    id: mail,
+  };
+  axios.post('', value)
+      .then(function (response) {
+        ChangeInfo(response);
+        return <MainContent mail={mail}/>;
+      })
+      .catch(err => console.log(err));
 
-  const emailChange = useStore(state => state.changeEmail);
-  emailChange(mail);
-  const change = useStore(state => state.changeState);
-  change(permission);
-  const nameChange = useStore(state => state.changeName);
-  nameChange(Username);
-  return <MainContent mail={mail}/>;
+  function ChangeInfo(resData) {
+
+    const emailChange = useStore(state => state.changeEmail);
+    emailChange(resData.mail);
+    const change = useStore(state => state.changeState);
+    change(resData.permission);
+    const nameChange = useStore(state => state.changeName);
+    nameChange(resData.username);
+  }
 }
 
 const { Content, Footer, Sider } = Layout;
-
-function getItem(label, key, icon, children) {
-  return {
-    key,
-    icon,
-    children,
-    label,
-  };
-}
-
-const items = [
-  getItem('首页', '1', <CloudOutlined />),
-  getItem('内容管理', 'sub1', <CopyOutlined />, [
-    getItem('文章管理', '2'),
-    getItem('笔记管理', '3'),
-  ]),
-  getItem('数据中心', 'sub2', <BarChartOutlined />, [
-      getItem('内容数据', '4'),
-    getItem('全站数据', '5'),
-  ]),
-    getItem('个人中心', 'sub3', <UserOutlined />, [
-        getItem('写文章', '6'),
-      getItem('信息设置', '7'),
-  ]),
-  getItem('文章搜索', '8', <SearchOutlined />),
-];
-
-let contents = [<Latest/>, <MyThesis/>, <MyColumn/>, <GetContentData/>, <GetUniversalData/>, '', <BasicInfoSet/>, ''];
 
 function BottomPart() {
   const [bottom, setBottom] = useState(10);
@@ -170,7 +153,7 @@ function SearchResult(props) {
     </>
 }
 
-const InnerForm = () => {
+const InnerForm = (contents) => {
   const onFinish = (values: any) => {
     if(!values['title'] && !values['path'] && !values['thesisType']
         && !values['overview'] && !values['writerName'] && !values['publisher']
@@ -254,6 +237,32 @@ const InnerForm = () => {
   );
 }
 
+function getItem(label, key, icon, children) {
+  return {
+    key,
+    icon,
+    children,
+    label,
+  };
+}
+
+const items = [
+  getItem('首页', '1', <CloudOutlined />),
+  getItem('内容管理', 'sub1', <CopyOutlined />, [
+    getItem('文章管理', '2'),
+    getItem('笔记管理', '3'),
+  ]),
+  getItem('数据中心', 'sub2', <BarChartOutlined />, [
+    getItem('内容数据', '4'),
+    getItem('全站数据', '5'),
+  ]),
+  getItem('个人中心', 'sub3', <UserOutlined />, [
+    getItem('写文章', '6'),
+    getItem('信息设置', '7'),
+  ]),
+  getItem('文章搜索', '8', <SearchOutlined />),
+];
+
 class MainContent extends React.Component {
   state = {
     collapsed: false,
@@ -280,6 +289,8 @@ class MainContent extends React.Component {
 
   render() {
     const { collapsed, num, isFocus } = this.state;
+    const id = this.props.mail;
+    let contents = [<Latest/>, <MyThesis id={id}/>, <MyColumn id={id}/>, <GetContentData/>, <GetUniversalData/>, '', <BasicInfoSet id={id}/>, ''];
     return (
         <>
         <Layout
@@ -308,7 +319,7 @@ class MainContent extends React.Component {
                   onCancel={() => this.setState({ isFocus: !isFocus })}
                   width={1000}
               >
-                <InnerForm/>
+                <InnerForm data={contents}/>
               </Modal>
             </Content>
             <Footer

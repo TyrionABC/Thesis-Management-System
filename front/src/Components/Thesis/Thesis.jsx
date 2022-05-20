@@ -1,13 +1,13 @@
 import React from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Space, Table, Input, Button, PageHeader, Descriptions, Tabs } from 'antd';
+import {Space, Table, Input, Button, PageHeader, Descriptions, Tabs, List } from 'antd';
 import "rsuite/dist/rsuite.min.css";
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
 import './Thesis.css';
 import axios from 'axios';
 
-const latestInfo = [{
+const llt = [{
   id: 1,
   title: '论文题目_1',
   date: '3月8号',
@@ -124,6 +124,16 @@ export class Latest extends React.Component {
     this.setState({ searchText: '' });
   };
 
+  getLatest() {
+    axios.post('', null)
+        .then(function (response) {
+          console.log(response);
+          return response;
+        })
+        .catch(err => console.log(err));
+    return null;
+  }
+
   render() {
     const columns = [
       {
@@ -235,7 +245,7 @@ export class Latest extends React.Component {
       clock += ss;
       return(clock);
     }
-
+    let latestInfo = this.getLatest();
     return <>
         <PageHeader style={{background: '#fff'}} title="最新文章" breadcrumb={{ routes }}>
           <Descriptions>
@@ -265,24 +275,49 @@ const note = [{
   content: 'This is a test for thesis 2.'
 }];
 
+function TableModule(newData) {
+  let title = newData;
+  let date = newData;
+  return <List
+      size="large"
+      header={<div>Header</div>}
+      footer={<div>Footer</div>}
+      description={date}
+      bordered
+      dataSource={title}
+      renderItem={item => <List.Item>{item}</List.Item>}
+  />
+}
+
+function getColumns(props) {
+  const id = props;
+  let value = {
+    id: id,
+  };
+  // 由 id 获取笔记
+  axios.post('', value)
+      .then(function (response) {
+        console.log(response);
+        return response;
+      })
+  return null;
+}
+
 export class MyColumn extends React.Component {
   render() {
     const { TabPane } = Tabs;
-
+    let data = getColumns(this.props.id); // data contains published and draft.
     function callback(key) {
       console.log(key);
     }
 
     const Tab = () => (
         <Tabs defaultActiveKey="1" onChange={callback} centered>
-          <TabPane tab="已发布" key="1">
-            Content of Tab Pane 1
+          <TabPane tab="草稿箱" key="1">
+            <TableModule data={data}/>
           </TabPane>
-          <TabPane tab="审核中" key="2">
-            Content of Tab Pane 2
-          </TabPane>
-          <TabPane tab="未发布" key="3">
-            Content of Tab Pane 3
+          <TabPane tab="已发布" key="2">
+            <TableModule data={data}/>
           </TabPane>
         </Tabs>
     );
@@ -297,7 +332,7 @@ export class MyColumn extends React.Component {
     return <>
       <PageHeader style={{background: '#fff'}} title="我的笔记" breadcrumb={{ routes }}>
         <Descriptions>
-          <Descriptions.Item label="统计笔记数">{ note.length }</Descriptions.Item>
+          <Descriptions.Item label="统计笔记数">{ data.length }</Descriptions.Item>
         </Descriptions>
       </PageHeader>
       <div className="site-layout-content">
@@ -331,25 +366,35 @@ const myWord = [
   },
 ];
 
+function getThesis(props) {
+  const id = props;
+  let value = {
+    id: id,
+  };
+  // 由 id 获取论文
+  axios.post('', value)
+      .then(function (response) {
+        console.log(response);
+        return response;
+      })
+      .catch(err => console.log(err));
+  return null;
+}
 
 export class MyThesis extends React.Component {
   render () {
     const { TabPane } = Tabs;
-
     function callback(key) {
       console.log(key);
     }
-
+    let data = getThesis(this.props.id);
     const Tab = () => (
         <Tabs defaultActiveKey="1" onChange={callback} centered>
-          <TabPane tab="已发布" key="1">
-            Content of Tab Pane 1
+          <TabPane tab="草稿箱" key="1">
+            <TableModule data={data}/>
           </TabPane>
-          <TabPane tab="审核中" key="2">
-            Content of Tab Pane 2
-          </TabPane>
-          <TabPane tab="未发布" key="3">
-            Content of Tab Pane 3
+          <TabPane tab="已发布" key="2">
+            <TableModule data={data}/>
           </TabPane>
         </Tabs>
     );
@@ -364,7 +409,7 @@ export class MyThesis extends React.Component {
   return <>
     <PageHeader style={{background: '#fff'}} title="我的文章" breadcrumb={{ routes }}>
       <Descriptions>
-        <Descriptions.Item label="统计文章数">{ myWord.length }</Descriptions.Item>
+        <Descriptions.Item label="统计文章数">{ data.length }</Descriptions.Item>
       </Descriptions>
     </PageHeader>
     <div className="site-layout-content">

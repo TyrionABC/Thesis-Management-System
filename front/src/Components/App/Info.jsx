@@ -6,6 +6,7 @@ import create from "zustand";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Option} from "antd/es/mentions";
 import '../Thesis/Thesis.css';
+import axios from "axios";
 
 const { TabPane } = Tabs;
 
@@ -141,15 +142,6 @@ const BasicSet = () => {
         </Form.Item>
 
         <Form.Item
-            label="邮箱(不建议修改)"
-            name="email"
-            rules={[{ message: 'Please input your email!' }]}
-            initialValue={userInfo(state => state.email)}
-        >
-          <Input />
-        </Form.Item>
-
-        <Form.Item
             label="学校/单位"
             name="work"
             rules={[{ message: 'Please input your school/company!' }]}
@@ -267,22 +259,32 @@ const PrivacySet = () => {
   </Form>
 }
 
-export function BasicInfoSet() {
-  const id = getQueryVariable("wh");
-  const change = userInfo(state => state.changeId);
-  change(id);
+function ChangeInfo(info) {
 
-  return <div className="site-layout-content">
-      <Tabs tabPosition={'left'}>
-        <TabPane tab="基本设置" key="1">
-          <PageHeader title="基本设置"/>
-          <BasicSet />
-        </TabPane>
-        <TabPane tab="隐私设置" key="2">
-          <PageHeader title="修改密码"/>
-          <PrivacySet />
-        </TabPane>
+}
 
-      </Tabs>
-    </div>
+export function BasicInfoSet(props) {
+  let id = props.id;
+  let values = {
+    id: id,
+  };
+  const item = <div className="site-layout-content">
+    <Tabs tabPosition={'left'}>
+      <TabPane tab="基本设置" key="1">
+        <PageHeader title="基本设置"/>
+        <BasicSet />
+      </TabPane>
+      <TabPane tab="隐私设置" key="2">
+        <PageHeader title="修改密码"/>
+        <PrivacySet />
+      </TabPane>
+
+    </Tabs>
+  </div>
+  axios.post('', id)
+      .then(function (response) {
+        ChangeInfo(response);
+        return item;
+      })
+      .catch(err => console.log(err));
 }
