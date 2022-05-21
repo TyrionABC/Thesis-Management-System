@@ -30,7 +30,7 @@ function CurentTime() {
   return(clock);
 }
 
-export const GetContentData = () => {
+export const GetContentData = (props) => {
   const routes = [
   {
     breadcrumbName: '数据中心',
@@ -46,16 +46,18 @@ export const GetContentData = () => {
       </Descriptions>
     </PageHeader>
     <div className="site-layout-content">
-      <Counting/>
-      <Category/>
+      <Counting id={props.id}/>
     </div>
   </>
 }
 
-const Counting: React.FC = () => {
+const Counting: React.FC = (props) => {
   let data;
   let day;
-  axios.post('')
+  let values = {
+    id: props.id,
+  };
+  axios.post('', values)
       .then(function (response) {
         console.log(response);
         data = response.data[0];
@@ -227,7 +229,8 @@ export const GetUniversalData = () => {
         </Descriptions>
       </PageHeader>
     <div className="site-layout-content">
-        <ReactECharts option={option} style={{ height: 500 }}/>
+      <ReactECharts option={option} style={{ height: 500 }}/>
+      <Category/>
     </div>
     </>
 }

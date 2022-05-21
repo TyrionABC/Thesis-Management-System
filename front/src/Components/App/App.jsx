@@ -271,7 +271,7 @@ class MainContent extends React.Component {
   render() {
     const { collapsed, num, isFocus } = this.state;
     const id = this.props.mail;
-    let contents = [<Latest/>, <MyThesis id={id}/>, <MyColumn id={id}/>, <GetContentData/>, <GetUniversalData/>, '', <BasicInfoSet id={id}/>, ''];
+    let contents = [<Latest/>, <MyThesis id={id}/>, <MyColumn id={id}/>, <GetContentData id={id}/>, <GetUniversalData/>, '', <BasicInfoSet id={id}/>, ''];
     return (
         <>
         <Layout
