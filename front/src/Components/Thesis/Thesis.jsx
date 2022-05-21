@@ -300,6 +300,7 @@ function getColumns(props) {
         console.log(response);
         return response;
       })
+      .catch(err => console.log(err));
   return null;
 }
 
@@ -314,10 +315,10 @@ export class MyColumn extends React.Component {
     const Tab = () => (
         <Tabs defaultActiveKey="1" onChange={callback} centered>
           <TabPane tab="草稿箱" key="1">
-            <TableModule data={data}/>
+            <TableModule data={[data.data[0]]}/>
           </TabPane>
           <TabPane tab="已发布" key="2">
-            <TableModule data={data}/>
+            <TableModule data={[data.data[0]]}/>
           </TabPane>
         </Tabs>
     );
@@ -332,7 +333,7 @@ export class MyColumn extends React.Component {
     return <>
       <PageHeader style={{background: '#fff'}} title="我的笔记" breadcrumb={{ routes }}>
         <Descriptions>
-          <Descriptions.Item label="统计笔记数">{ data.length }</Descriptions.Item>
+          <Descriptions.Item label="统计已发布笔记数">{ data.length }</Descriptions.Item>
         </Descriptions>
       </PageHeader>
       <div className="site-layout-content">
@@ -391,10 +392,10 @@ export class MyThesis extends React.Component {
     const Tab = () => (
         <Tabs defaultActiveKey="1" onChange={callback} centered>
           <TabPane tab="草稿箱" key="1">
-            <TableModule data={data}/>
+            <TableModule data={data.data[0]}/>
           </TabPane>
           <TabPane tab="已发布" key="2">
-            <TableModule data={data}/>
+            <TableModule data={data.data[0]}/>
           </TabPane>
         </Tabs>
     );
@@ -409,7 +410,7 @@ export class MyThesis extends React.Component {
   return <>
     <PageHeader style={{background: '#fff'}} title="我的文章" breadcrumb={{ routes }}>
       <Descriptions>
-        <Descriptions.Item label="统计文章数">{ data.length }</Descriptions.Item>
+        <Descriptions.Item label="统计已发布文章数">{ data.length }</Descriptions.Item>
       </Descriptions>
     </PageHeader>
     <div className="site-layout-content">

@@ -33,7 +33,6 @@ import { useLocation } from "react-router";
 import axios from "axios";
 
 const useStore = create(set => ({
-  id: 101010,
   name: '',
   state: 'unallowed',
   email: '',
@@ -48,32 +47,18 @@ function App() {
   let { state } = useLocation();
   if(state === null) window.location.replace("/");
   let permission = state['permission'];
-  let Username = state['name'];
-  if(permission !== 'allowed' || Username.length === 0) {
+  let username = state['name'];
+  if(permission !== 'allowed' || username.length === 0) {
     window.location.replace("/");
   }
   let mail = state['email'];
-
-  // 根据email获取用户信息
-  let value = {
-    id: mail,
-  };
-  axios.post('', value)
-      .then(function (response) {
-        ChangeInfo(response);
-        return <MainContent mail={mail}/>;
-      })
-      .catch(err => console.log(err));
-
-  function ChangeInfo(resData) {
-
-    const emailChange = useStore(state => state.changeEmail);
-    emailChange(resData.mail);
-    const change = useStore(state => state.changeState);
-    change(resData.permission);
-    const nameChange = useStore(state => state.changeName);
-    nameChange(resData.username);
-  }
+  const emailChange = useStore(state => state.changeEmail);
+  emailChange(mail);
+  const change = useStore(state => state.changeState);
+  change(permission);
+  const nameChange = useStore(state => state.changeName);
+  nameChange(username);
+  return <MainContent mail={mail}/>;
 }
 
 const { Content, Footer, Sider } = Layout;
@@ -159,16 +144,12 @@ const InnerForm = (contents) => {
         && !values['publishMeeting']) alert("搜索条件不能全为空!");
     console.log('Success:', values);
     // 向后端请求论文列表, 接收论文列表
-    let list = [];
     axios.post('http://localhost:8080/admin/select', values)
         .then(function (response) {
-          list.push(response.data[0]);
-          console.log(list);
           if(response === null) alert('搜索结果为空');
-          else contents[7] = <SearchResult lists={list}/>;
+          else contents[7] = <SearchResult lists={[response.data[0]]}/>;
         })
         .catch(err => console.log(err));
-
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -184,6 +165,7 @@ const InnerForm = (contents) => {
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
+          title="搜索条件"
       >
         <Form.Item
             label="论文标题"
@@ -318,7 +300,7 @@ class MainContent extends React.Component {
                   onCancel={() => this.setState({ isFocus: !isFocus })}
                   width={1000}
               >
-                <InnerForm data={contents}/>
+                <InnerForm data={{...contents}}/>
               </Modal>
             </Content>
             <Footer

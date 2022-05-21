@@ -48,8 +48,7 @@ function Navi() {
 
   let navigate = useNavigate();
 
-  const loginHandle = () => {
-
+  function loginHandle() {
     // 密码账号验证， 发送 formValue 数据
     let psw = CryptoJS.MD5(formValue['password']).toString();
     // 验证

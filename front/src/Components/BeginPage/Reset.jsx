@@ -82,13 +82,14 @@ const Reset = () => {
           console.log('response: ', response);
           const success = response['data'];
           if(success) {
-            alert("注册成功!");
+            alert("操作成功!");
             window.history.go(-1);
           }
           else {
-            alert("注册失败, 请重试!");
+            alert("操作失败, 请重试!");
           }
-        }).catch(err => console.log(err))
+        })
+        .catch(err => console.log(err));
   };
 
   const handleCheckEmail = (e) => {
