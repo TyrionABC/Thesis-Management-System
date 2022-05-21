@@ -1,19 +1,19 @@
 package com.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.domain.*;
+import com.domain.Note_and_extra_file;
+import com.domain.Paper;
+import com.domain.Paper_Basic_info;
+import com.domain.Query;
 import com.service.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-import java.util.Map;
+
+// data: ['前端', '后端', 'Android', 'IOS', '软件测试', '人工智能', '机器学习', '深度学习', '数据库', '网络安全']
 
 @Controller
 @RequestMapping("/admin")
@@ -41,9 +41,11 @@ public class PaperController {
     @Autowired
     private WriterService writerService;
     //获取用户笔记
-    @GetMapping("myNotes/{userId}")
+    @CrossOrigin
+    @PostMapping("/myNotes")
     @ResponseBody
-    public String myNotes(@PathVariable("userId") String userId){
+    public JSONArray myNotes(@RequestParam String userId){
+        System.out.println(userId);
         List<Note_and_extra_file> allNotes=noteAndFileService.selectMyNotes(userId);//所有数据
         JSONArray json = new JSONArray();
         for(Note_and_extra_file note : allNotes){
@@ -55,19 +57,18 @@ public class PaperController {
             json.add(jo);
         }
         System.out.println(json);
-        return json.toString();
+        return json;
     }
 
-    //呈现论文,传入根据什么进行排序，以及页面的大小和页数，即分页查询##
+    //获取用户最近发布的20篇论文
+    @CrossOrigin
     @GetMapping("/paper")
     @ResponseBody
-    public String paper(){
-        QueryWrapper<Paper_Basic_info> queryWrapper=new QueryWrapper<>();
-        queryWrapper.orderByDesc("title");
-        Map<String,Object> paperPage =paperService.selectPage(1,5,queryWrapper);
-        List<Paper_Basic_info> allPapers=paperService.selectAll();//所有数据
+    public JSONArray paper(){
+        List<Paper> allPapers=paperService.selectNewPapers();//所有数据
         JSONArray json = new JSONArray();
-        for(Paper_Basic_info paper : allPapers){
+        // 需要添加作者、发布人姓名、研究方向、发布会议
+        for(Paper paper : allPapers){
             JSONObject jo = new JSONObject();
             jo.put("id", paper.getId());
             jo.put("literatureLink", paper.getLiteratureLink());
@@ -75,15 +76,18 @@ public class PaperController {
             jo.put("thesisDate",paper.getThesisDate());
             jo.put("thesisType",paper.getThesisType());
             jo.put("title",paper.getTitle());
+            jo.put("like",paper.getLike());
             json.add(jo);
         }
-        return ""+json.size();
+        return json;
     }
-    //获取用户发布的所有论文
-    @GetMapping("/myPaper/{userId}")
+    //获取用户发布的论文
+    @CrossOrigin
+    @PostMapping("/myPaper")
     @ResponseBody
-    public String myPaper(@PathVariable("userId") String userId){
+    public JSONArray myPaper(@RequestParam("userId") String userId){
         List<Paper> allPapers=paperService.selectMyPapers(userId);//所有数据
+        System.out.println("flag");
         JSONArray json = new JSONArray();
         for(Paper paper : allPapers){
             JSONObject jo = new JSONObject();
@@ -93,9 +97,10 @@ public class PaperController {
             jo.put("thesisDate",paper.getThesisDate());
             jo.put("thesisType",paper.getThesisType());
             jo.put("title",paper.getTitle());
+            jo.put("like",paper.getLike());
             json.add(jo);
         }
-        return json.toString();
+        return json;
     }
     //查找论文，⽀持按照研究⽅向、论⽂标题、论⽂类型、论⽂摘要模糊查询、作者、发布⼈、会议等条件筛选或查询，以及组合查询
     //列表查询结果⽀持分页、排序
@@ -117,20 +122,17 @@ public class PaperController {
             jo.put("thesisDate",paper.getThesisDate());
             jo.put("thesisType",paper.getThesisType());
             jo.put("title",paper.getTitle());
-            jo.put("writereName",paper.getWriterName());
+            jo.put("writerName",paper.getWriterName());
+            jo.put("like",paper.getLike());
             json.add(jo);
         }
         return json;
     }
-    //查询某篇论文详细信息，包括笔记、评论和其他信息。
-    public String getDetails(Model model){
-        List<Comment> comments=null;
-        return null;
-    }
     //删除论文
-    @DeleteMapping("/delete/{id}")
+    @CrossOrigin
+    @PostMapping("/delete")
     @ResponseBody
-    public String paper(@PathVariable String id,RedirectAttributes attributes){
+    public String paper(@RequestParam String id){
         boolean flag=paperService.deletePaperById(id);
         if(flag){
             return "false";
@@ -140,9 +142,10 @@ public class PaperController {
         }
     }
     //修改论文信息##
-    @PostMapping("/update/{id}")
+    @CrossOrigin
+    @PostMapping("/update")
     @ResponseBody
-    public String update(@RequestBody Paper_Basic_info paper,@PathVariable String id,RedirectAttributes attributes){
+    public String update(@RequestBody Paper_Basic_info paper,@RequestParam String id){
         if(paperService.selectPaperById(id)==null){
             return "false";
         }
@@ -153,6 +156,7 @@ public class PaperController {
     }
 
     //插入论文##
+    @CrossOrigin
     @PostMapping("/input")
     @ResponseBody
     public String input(@RequestBody Paper_Basic_info paper){
@@ -164,8 +168,4 @@ public class PaperController {
             return "true";
         }
     }
-
-
-
-
 }

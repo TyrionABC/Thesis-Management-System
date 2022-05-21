@@ -3,7 +3,6 @@ package com.controller;
 import com.dao.UserMapper;
 import com.domain.User;
 import com.service.UserService;
-import org.apache.ibatis.jdbc.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -19,23 +18,24 @@ public class UserController {
     private UserMapper userMapper;
     @Autowired
     private UserService userService;
+    @CrossOrigin
     @GetMapping("/getAllUsers")
     @ResponseBody
     public List<User> getAll(){
         System.out.println(userMapper.selectList(null));
         return userMapper.selectList(null);
     }
+    @CrossOrigin
     @GetMapping
     public String loginPage(){
         return "admin/login";
     }
+    @CrossOrigin
     @GetMapping("/register")
     public String register(){
         return "admin/register";
     }
 
-//    public String Login(@RequestParam(value = "userId") String userId, @RequestParam(value = "password") String password,
-//                        HttpSession session, RedirectAttributes attributes)
     @CrossOrigin
     @PostMapping("/login")
     @ResponseBody
@@ -52,9 +52,6 @@ public class UserController {
             return "false";
         }
     }
-//    @PostMapping("/register")
-//    public String Register(@RequestParam(value = "userId") String userId, @RequestParam(value = "password") String password,
-//                           @RequestParam(value = "name") String name,HttpSession session,RedirectAttributes attributes){
     @CrossOrigin
     @PostMapping("/register")
     @ResponseBody
@@ -76,18 +73,16 @@ public class UserController {
             return "true";
         }
     }
+    @CrossOrigin
     @GetMapping("/logout")
     public String Logout(HttpSession session){
         session.removeAttribute("user");
         return "redirect:/users";
     }
-    @PostMapping("/update")
+    @CrossOrigin
+    @PostMapping("/updateUser")
     @ResponseBody
     public String updateInfo(@RequestBody User user1){
-        if (userService.selectUserById(user1.getUserId()).getPassword()==user1.getPassword()
-                &&userService.selectUserById(user1.getUserId()).getName()==user1.getName())
-            return "false";
-        else
         userService.updateUser(user1);
         return "true";
     }

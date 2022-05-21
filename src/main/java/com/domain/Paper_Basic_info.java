@@ -21,6 +21,16 @@ public class Paper_Basic_info {
     @TableField("publisher_id")
     private String publisherId;
 
+    private int like;
+
+    public int getLike() {
+        return like;
+    }
+
+    public void setLike(int like) {
+        this.like = like;
+    }
+
     public String getId() {
         return id;
     }
@@ -78,6 +88,7 @@ public class Paper_Basic_info {
                 ", thesisDate=" + thesisDate +
                 ", literatureLink='" + literatureLink + '\'' +
                 ", publisherId='" + publisherId + '\'' +
+                ", like=" + like +
                 '}';
     }
 }

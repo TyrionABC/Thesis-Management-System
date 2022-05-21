@@ -14,6 +14,36 @@ public class User {
 
     private String name;
 
+    private String gender;
+
+    private String school;
+
+    private String direction;
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getSchool() {
+        return school;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
+
     public String getUserId() {
         return userId;
     }
@@ -53,6 +83,9 @@ public class User {
                 ", password='" + password + '\'' +
                 ", permission=" + permission +
                 ", name='" + name + '\'' +
+                ", gender='" + gender + '\'' +
+                ", school='" + school + '\'' +
+                ", direction='" + direction + '\'' +
                 '}';
     }
 }

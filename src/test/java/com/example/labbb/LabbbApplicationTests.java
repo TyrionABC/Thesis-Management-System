@@ -231,6 +231,9 @@ class LabbbApplicationTests {
     void getMyNotes(){
         System.out.println(noteAndFileService.selectMyNotes("1216776075"));
     }
-
+    @Test
+    void getNewPapers(){
+        System.out.println(paperMapper.getNewPapers());
+    }
 
 }

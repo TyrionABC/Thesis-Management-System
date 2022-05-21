@@ -137,7 +137,7 @@ function SearchResult(props) {
     </>
 }
 
-const InnerForm = (contents) => {
+const InnerForm = () => {
   const onFinish = (values: any) => {
     if(!values['title'] && !values['path'] && !values['thesisType']
         && !values['overview'] && !values['writerName'] && !values['publisher']
@@ -146,8 +146,12 @@ const InnerForm = (contents) => {
     // 向后端请求论文列表, 接收论文列表
     axios.post('http://localhost:8080/admin/select', values)
         .then(function (response) {
-          if(response === null) alert('搜索结果为空');
-          else contents[7] = <SearchResult lists={[response.data[0]]}/>;
+          console.log(response);
+          let pass;
+          if(response.data.length === 0)
+            pass = [];
+          else pass = [response.data[0]];
+          contents[7] = <SearchResult lists={pass}/>;
         })
         .catch(err => console.log(err));
   };
@@ -165,7 +169,6 @@ const InnerForm = (contents) => {
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
-          title="搜索条件"
       >
         <Form.Item
             label="论文标题"
@@ -244,6 +247,21 @@ const items = [
   getItem('文章搜索', '8', <SearchOutlined />),
 ];
 
+let id = "";
+
+let contents = [];
+
+function setContent(id) {
+  contents[0] = <Latest/>;
+  contents[1] = <MyThesis id={id}/>;
+  contents[2] = <MyColumn id={id}/>;
+  contents[3] = <GetContentData id={id}/>;
+  contents[4] = <GetUniversalData id={id}/>;
+  contents[5] = '';
+  contents[6] = <BasicInfoSet id={id}/>;
+  contents[7] = '';
+}
+
 class MainContent extends React.Component {
   state = {
     collapsed: false,
@@ -270,8 +288,8 @@ class MainContent extends React.Component {
 
   render() {
     const { collapsed, num, isFocus } = this.state;
-    const id = this.props.mail;
-    let contents = [<Latest/>, <MyThesis id={id}/>, <MyColumn id={id}/>, <GetContentData id={id}/>, <GetUniversalData/>, '', <BasicInfoSet id={id}/>, ''];
+    id = this.props.mail;
+    setContent(id);
     return (
         <>
         <Layout
@@ -300,7 +318,7 @@ class MainContent extends React.Component {
                   onCancel={() => this.setState({ isFocus: !isFocus })}
                   width={1000}
               >
-                <InnerForm data={{...contents}}/>
+                <InnerForm />
               </Modal>
             </Content>
             <Footer

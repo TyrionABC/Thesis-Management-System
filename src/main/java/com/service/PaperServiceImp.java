@@ -91,4 +91,10 @@ public class PaperServiceImp implements PaperService{
     public List<Paper> selectMyPapers(String userId) {
         return paperMapper.getMyPapers(userId);
     }
+
+    @Override
+    public List<Paper> selectNewPapers() {
+        return paperMapper.getNewPapers();
+    }
+
 }

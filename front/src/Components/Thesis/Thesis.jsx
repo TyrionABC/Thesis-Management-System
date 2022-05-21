@@ -40,11 +40,18 @@ const llt = [{
   meeting: 'Meeting_3',
 }];
 
+
 export class Latest extends React.Component {
   state = {
     searchText: '',
     searchedColumn: '',
+    data: '',
   };
+
+  constructor() {
+    super();
+    this.getLatest();
+  }
 
   getColumnSearchProps = dataIndex => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -125,13 +132,14 @@ export class Latest extends React.Component {
   };
 
   getLatest() {
-    axios.post('', null)
-        .then(function (response) {
-          console.log(response);
-          return response;
+    axios.get('http://localhost:8080/admin/paper')
+        .then(response => {
+          response = response.data;
+          this.setState ({
+            data: response,
+          });
         })
         .catch(err => console.log(err));
-    return null;
   }
 
   render() {
@@ -159,8 +167,8 @@ export class Latest extends React.Component {
       },
       {
         title: '发布日期',
-        dataIndex: 'date',
-        key: 'date',
+        dataIndex: 'thesisDate',
+        key: 'thesisDate',
         width: '10%',
         ...this.getColumnSearchProps('date'),
         sorter: (a, b) => a.date.localeCompare(b.date),
@@ -175,8 +183,8 @@ export class Latest extends React.Component {
       },
       {
         title: '论文类型',
-        dataIndex: 'category',
-        key: 'category',
+        dataIndex: 'thesisType',
+        key: 'thesisType',
         width: '10%',
         ...this.getColumnSearchProps('category'),
       },
@@ -196,8 +204,8 @@ export class Latest extends React.Component {
       },
       {
         title: '点赞数',
-        dataIndex: 'likes',
-        key: 'likes',
+        dataIndex: 'like',
+        key: 'like',
         width: '10%',
         ...this.getColumnSearchProps('likes'),
         sorter: (a, b) => a.likes.valueOf() - b.likes.valueOf(),
@@ -245,14 +253,14 @@ export class Latest extends React.Component {
       clock += ss;
       return(clock);
     }
-    let latestInfo = this.getLatest();
+    console.log(this.state.data);
     return <>
         <PageHeader style={{background: '#fff'}} title="最新文章" breadcrumb={{ routes }}>
           <Descriptions>
             <Descriptions.Item label="更新时间">{ CurentTime() }</Descriptions.Item>
           </Descriptions>
         </PageHeader>
-        <Table className="site-layout-content" columns={columns} dataSource={latestInfo} />
+        <Table className="site-layout-content" columns={columns} dataSource={this.state.data} />
       </>
   }
 }
@@ -289,36 +297,44 @@ function TableModule(newData) {
   />
 }
 
-function getColumns(props) {
-  const id = props;
-  let value = {
-    id: id,
-  };
-  // 由 id 获取笔记
-  axios.post('', value)
-      .then(function (response) {
-        console.log(response);
-        return response;
-      })
-      .catch(err => console.log(err));
-  return null;
-}
-
 export class MyColumn extends React.Component {
+  state = {
+    data: '',
+    id: '',
+  }
+
+  constructor() {
+    super();
+    this.getLatest();
+    this.setState({
+      id: this.props.id
+    })
+  }
+
+  getLatest() {
+    axios.post('http://localhost:8080/admin/myNotes', this.state.id.toString())
+        .then(response => {
+          response = response.data;
+          this.setState({
+            data: response,
+          })
+        })
+        .catch(err => console.log(err));
+  }
+
   render() {
     const { TabPane } = Tabs;
-    let data = getColumns(this.props.id); // data contains published and draft.
     function callback(key) {
       console.log(key);
     }
-
+    console.log(this.state.data + 'my col')
     const Tab = () => (
         <Tabs defaultActiveKey="1" onChange={callback} centered>
           <TabPane tab="草稿箱" key="1">
-            <TableModule data={[data.data[0]]}/>
+            <TableModule data={this.state.data[0]}/>
           </TabPane>
           <TabPane tab="已发布" key="2">
-            <TableModule data={[data.data[0]]}/>
+            <TableModule data={this.state.data[1]}/>
           </TabPane>
         </Tabs>
     );
@@ -333,7 +349,7 @@ export class MyColumn extends React.Component {
     return <>
       <PageHeader style={{background: '#fff'}} title="我的笔记" breadcrumb={{ routes }}>
         <Descriptions>
-          <Descriptions.Item label="统计已发布笔记数">{ data.length }</Descriptions.Item>
+          <Descriptions.Item label="统计已发布笔记数">{ this.state.data.length }</Descriptions.Item>
         </Descriptions>
       </PageHeader>
       <div className="site-layout-content">
@@ -367,35 +383,44 @@ const myWord = [
   },
 ];
 
-function getThesis(props) {
-  const id = props;
-  let value = {
-    id: id,
-  };
-  // 由 id 获取论文
-  axios.post('', value)
-      .then(function (response) {
-        console.log(response);
-        return response;
-      })
-      .catch(err => console.log(err));
-  return null;
-}
-
 export class MyThesis extends React.Component {
+  state = {
+    data: '',
+    id: '',
+  }
+
+  constructor() {
+    super();
+    this.setState({
+      id: this.props.id,
+    });
+    this.getLatest();
+  }
+
+  getLatest() {
+    axios.post('http://localhost:8080/admin/myPaper', this.state.id.toString())
+        .then(response => {
+          response = response.data;
+          this.setState({
+            data: response,
+          })
+        })
+        .catch(err => console.log(err));
+  }
+
   render () {
     const { TabPane } = Tabs;
+    console.log(this.props.id);
     function callback(key) {
       console.log(key);
     }
-    let data = getThesis(this.props.id);
     const Tab = () => (
         <Tabs defaultActiveKey="1" onChange={callback} centered>
           <TabPane tab="草稿箱" key="1">
-            <TableModule data={data.data[0]}/>
+            <TableModule data={this.state.data[0]}/>
           </TabPane>
           <TabPane tab="已发布" key="2">
-            <TableModule data={data.data[0]}/>
+            <TableModule data={this.state.data[1]}/>
           </TabPane>
         </Tabs>
     );
@@ -410,7 +435,7 @@ export class MyThesis extends React.Component {
   return <>
     <PageHeader style={{background: '#fff'}} title="我的文章" breadcrumb={{ routes }}>
       <Descriptions>
-        <Descriptions.Item label="统计已发布文章数">{ data.length }</Descriptions.Item>
+        <Descriptions.Item label="统计已发布文章数">{ this.state.data.length }</Descriptions.Item>
       </Descriptions>
     </PageHeader>
     <div className="site-layout-content">

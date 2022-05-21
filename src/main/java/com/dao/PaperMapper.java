@@ -55,6 +55,19 @@ public interface PaperMapper extends BaseMapper<Paper_Basic_info> {
             "</script>"})
     List<Paper> getMyPapers(@Param("userId") String userId);
 
+    @Select({"<script>" +
+            "select * from paper_basic_info left join belong on paper_basic_info.id=belong.id " +
+            "left join direction on belong.direction_name=direction.direction_name " +
+            "left join note_and_extra_file on paper_basic_info.id=note_and_extra_file.id " +
+            "left join paper_publish on paper_basic_info.id=paper_publish.id " +
+            "left join writer on paper_basic_info.id=writer.id " +
+            "left join user on paper_basic_info.publisher_id=user.user_id " +
+            "order by paper_basic_info.thesis_date desc " +
+            "limit 0,20"+
+            "</script>"})
+    List<Paper> getNewPapers();
+
+
     @Select("select * from paper_basic_info where id=#{id}")
     Paper_Basic_info selectPaperById(String id);
 

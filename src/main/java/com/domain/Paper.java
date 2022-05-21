@@ -20,6 +20,7 @@ public class Paper {
     String writerName;
     String publishMeeting;
     String publisher;
+    int like;
 
     public String getId() {
         return id;
@@ -109,6 +110,14 @@ public class Paper {
         this.publisher = publisher;
     }
 
+    public int getLike() {
+        return like;
+    }
+
+    public void setLike(int like) {
+        this.like = like;
+    }
+
     @Override
     public String toString() {
         return "Paper{" +
@@ -123,6 +132,7 @@ public class Paper {
                 ", writerName='" + writerName + '\'' +
                 ", publishMeeting='" + publishMeeting + '\'' +
                 ", publisher='" + publisher + '\'' +
+                ", like='" + like + '\'' +
                 '}';
     }
 }
