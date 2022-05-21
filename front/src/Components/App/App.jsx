@@ -77,7 +77,9 @@ function Name() {
   const url = useStore(state => state.image);
   const name = useStore(state => state.name);
   return <>
-    <Avatar size={'large'} src={url} style={{margin: 5}}/>
+    <Avatar size={'large'}
+            src="https://images.pexels.com/photos/1237119/pexels-photo-1237119.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+            style={{margin: 5}}/>
     <br/>
     <Link to="/" id="logInfo" style={{color: 'white'}}>signed as: {name}</Link>
   </>

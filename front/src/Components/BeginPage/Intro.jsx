@@ -56,7 +56,7 @@ function Navi() {
         userId: formValue['email'],
         password: psw,
       };
-    axios.post('http://localhost:8080/admin/login', value)
+    /*axios.post('http://localhost:8080/admin/login', value)
         .then(function (response) {
           console.log("response: ", response);
           const correct = response['data'];
@@ -67,7 +67,8 @@ function Navi() {
             alert("密码或用户名错误!");
           }
         })
-        .catch(err => console.log(err))
+        .catch(err => console.log(err))*/
+    navigate('/app', {replace: true, state: data});
   }
 
   function password_handle(content) {
