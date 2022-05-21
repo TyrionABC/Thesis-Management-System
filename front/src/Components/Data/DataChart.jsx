@@ -3,44 +3,32 @@ import ReactECharts from 'echarts-for-react';
 import myChart from "echarts-for-react";
 import '../Thesis/Thesis.css'
 import {Descriptions, PageHeader} from "antd";
+import axios from "axios";
 
 function CurentTime() {
   var now = new Date();
-
   var year = now.getFullYear();       //年
   var month = now.getMonth() + 1;     //月
   var day = now.getDate();            //日
-
   var hh = now.getHours();            //时
   var mm = now.getMinutes();          //分
   var ss = now.getSeconds();          //秒
-
   var clock = year + "-";
-
   if(month < 10)
     clock += "0";
-
   clock += month + "-";
-
   if(day < 10)
     clock += "0";
-
   clock += day + " ";
-
   if(hh < 10)
     clock += "0";
-
   clock += hh + ":";
   if (mm < 10) clock += '0';
   clock += mm + ":";
-
   if(ss < 10) clock += '0';
-
   clock += ss;
   return(clock);
 }
-
-
 
 export const GetContentData = () => {
   const routes = [
@@ -65,20 +53,29 @@ export const GetContentData = () => {
 }
 
 const Counting: React.FC = () => {
+  let data;
+  let day;
+  axios.post('')
+      .then(function (response) {
+        console.log(response);
+        data = response.data[0];
+        day = response.data[0];
+      })
+      .catch(err => console.log(err));
   const options = {
     title: {
       text: "论文数量"
     },
     xAxis: {
       type: 'category',
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      data: day,
     },
     yAxis: {
       type: 'value',
     },
     series: [
       {
-        data: [820, 932, 901, 934, 1290, 1330, 1320],
+        data: data,
         type: 'line',
         smooth: true,
       },
@@ -92,6 +89,15 @@ const Counting: React.FC = () => {
 };
 
 const Category: React.FC = () => {
+  let thesisCount;
+  let likeCount;
+  axios.post('')
+      .then(function (response) {
+        console.log(response);
+        thesisCount = response.data[0];
+        likeCount = response.data[0];
+      })
+      .catch(err => console.log(err));
   const option = {
     title: {
       text: '研究方向'
@@ -107,12 +113,12 @@ const Category: React.FC = () => {
     series: [{
       name: '我的论文',
       type: 'bar',
-      data: [5, 20, 36, 10, 10, 20, 12, 3, 4, 20]
+      data: thesisCount,
     },
       {
         name: '我的点赞',
         type: 'bar',
-        data: [10, 4, 19, 42, 50, 33, 43, 44, 13, 16]
+        data: likeCount,
       }]
   };
 
@@ -124,6 +130,13 @@ const Category: React.FC = () => {
 }
 
 export const GetUniversalData = () => {
+  let data = [];
+  axios.post('')
+      .then(function (response) {
+        console.log(response);
+        data.push(response.data[0]);
+      })
+      .catch(err => console.log(err));
   function randomData() {
     now = new Date(+now + oneDay);
     value = value + Math.random() * 21 - 10;
@@ -135,7 +148,6 @@ export const GetUniversalData = () => {
       ]
     };
   }
-  let data = [];
   let now = new Date(1997, 9, 3);
   let oneDay = 24 * 3600 * 1000;
   let value = Math.random() * 1000;
@@ -144,7 +156,7 @@ export const GetUniversalData = () => {
   }
   let option = {
     title: {
-      text: 'Dynamic Data & Time Axis'
+      text: '全站文章发布趋势'
     },
     tooltip: {
       trigger: 'axis',
