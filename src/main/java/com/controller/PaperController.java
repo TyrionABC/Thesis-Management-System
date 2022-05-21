@@ -1,12 +1,11 @@
 package com.controller;
 
-import com.domain.Note_and_extra_file;
-import com.domain.Paper;
-import com.domain.Paper_Basic_info;
-import com.domain.Query;
+import com.domain.*;
 import com.service.*;
+import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -85,9 +84,10 @@ public class PaperController {
     @CrossOrigin
     @PostMapping("/myPaper")
     @ResponseBody
-    public JSONArray myPaper(@RequestParam("userId") String userId){
-        List<Paper> allPapers=paperService.selectMyPapers(userId);//所有数据
-        System.out.println("flag");
+    public JSONArray myPaper(@RequestBody Id userId){
+        System.out.println(userId.getUserId());
+        List<Paper> allPapers=paperService.selectMyPapers(userId.getUserId());//所有数据
+        System.out.println(userId);
         JSONArray json = new JSONArray();
         for(Paper paper : allPapers){
             JSONObject jo = new JSONObject();
@@ -100,6 +100,7 @@ public class PaperController {
             jo.put("like",paper.getLike());
             json.add(jo);
         }
+        System.out.println(json);
         return json;
     }
     //查找论文，⽀持按照研究⽅向、论⽂标题、论⽂类型、论⽂摘要模糊查询、作者、发布⼈、会议等条件筛选或查询，以及组合查询

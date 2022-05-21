@@ -307,12 +307,12 @@ export class MyColumn extends React.Component {
     this.setState({
       id: thisId,
     });
-    axios.post('https://localhost:8080/admin/myNotes', thisId)
+    axios.post('http://localhost:8080/admin/myNotes', thisId)
         .then(response => {
           response = response.data;
           this.setState({
             data: response,
-          })
+          }, )
         })
         .catch(err => console.log(err));
   }
@@ -380,37 +380,43 @@ const myWord = [
 
 export class MyThesis extends React.Component {
   state = {
-    data: '',
     id: '',
+    data: '',
+  }
+
+  constructor(props) {
+    super(props);
+    this.getData(props.id);
   }
 
   getData(thisId) {
-    this.setState({
-      id: thisId,
-    });
-    axios.post('https://localhost:8080/admin/myPaper', thisId)
+    const json = {
+      userId: thisId,
+    };
+    axios.post('http://localhost:8080/admin/myPaper', json)
         .then(response => {
           response = response.data;
           this.setState({
+            id: thisId,
             data: response,
-          })
+          });
         })
         .catch(err => console.log(err));
   }
 
   render () {
-    this.getData(this.props.id);
     const { TabPane } = Tabs;
     function callback(key) {
       console.log(key);
     }
+    console.log(this.state);
     const Tab = () => (
         <Tabs defaultActiveKey="1" onChange={callback} centered>
           <TabPane tab="草稿箱" key="1">
             <TableModule data={this.state.data[0]}/>
           </TabPane>
           <TabPane tab="已发布" key="2">
-            <TableModule data={this.state.data[1]}/>
+            <TableModule data={this.state.data[0]}/>
           </TabPane>
         </Tabs>
     );
