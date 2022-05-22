@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {lazy, useState, Suspense} from 'react';
 import {
   Layout,
   Menu,
@@ -25,12 +25,15 @@ import {
 } from '@ant-design/icons';
 import create from 'zustand';
 import { GetContentData, GetUniversalData } from "../Data/DataChart";
-import { Latest, MyThesis, MyColumn } from "../Thesis/Thesis";
+import { Latest } from "../Thesis/Thesis";
 import { BasicInfoSet } from "./Info";
 import './App.css';
 import { Link } from 'react-router-dom';
 import { useLocation } from "react-router";
 import axios from "axios";
+
+const MyThesis = lazy(() => import('../Thesis/MyThesis'));
+const MyColumn = lazy(() => import('../Thesis/MyColumn'));
 
 const useStore = create(set => ({
   name: '',
@@ -262,6 +265,7 @@ function setContent(id) {
   contents[5] = '';
   contents[6] = <BasicInfoSet id={id}/>;
   contents[7] = '';
+  console.log(contents);
 }
 
 class MainContent extends React.Component {
@@ -306,12 +310,13 @@ class MainContent extends React.Component {
             <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} onClick={this.onClick}/>
           </Sider>
           <Layout className="site-layout" menu>
+            <Suspense fallback={<div>加载中...</div>}>
             <Content
                 style={{
                   margin: '8px 16px',
                 }}
             >
-              { contents[num - 1] }
+                { contents[num - 1] }
               <Modal
                   title="论文查询"
                   centered
@@ -323,6 +328,7 @@ class MainContent extends React.Component {
                 <InnerForm />
               </Modal>
             </Content>
+            </Suspense>
             <Footer
                 style={{
                   textAlign: 'center',
