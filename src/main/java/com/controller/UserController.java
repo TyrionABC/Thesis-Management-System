@@ -1,8 +1,10 @@
 package com.controller;
 
 import com.dao.UserMapper;
+import com.domain.Id;
 import com.domain.User;
 import com.service.UserService;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -85,6 +87,19 @@ public class UserController {
     public String updateInfo(@RequestBody User user1){
         userService.updateUser(user1);
         return "true";
+    }
+    @CrossOrigin
+    @PostMapping("/getUserDetails")
+    @ResponseBody
+    public JSONObject getUserDetails(@RequestBody Id userId){
+        JSONObject jsonObject=new JSONObject();
+        User user=userService.selectUserById(userId.getUserId());
+        jsonObject.put("direction",user.getDirection());
+        jsonObject.put("gender",user.getGender());
+        jsonObject.put("name",user.getName());
+        jsonObject.put("password",user.getPassword());
+        jsonObject.put("school",user.getSchool());
+        return jsonObject;
     }
 
 }

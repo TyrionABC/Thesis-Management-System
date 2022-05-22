@@ -94,7 +94,8 @@ public class PaperServiceImp implements PaperService{
 
     @Override
     public List<Paper> selectNewPapers() {
-        return paperMapper.getNewPapers();
+        List<Paper> papers=paperMapper.getNewPapers();
+        return papers;
     }
 
 }

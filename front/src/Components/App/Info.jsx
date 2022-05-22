@@ -12,15 +12,14 @@ const { TabPane } = Tabs;
 const userInfo = create(set => ({
   id: '',
   name: 'jack',
-  permission: 1,
-  email: '1822140986@qq.com',
   direction: 'ML',
-  image: 'https://images.pexels.com/photos/189349/pexels-photo-189349.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
   sex: 'male',
   work: 'ECNU',
-  alarmCount: 6,
-  changeImage: (url) => set(state => ({ image: url })),
   changeId: (idn) => set(state => ({ id: idn })),
+  changeName: (name) => set(state => ({name: name})),
+  changeDirection: (dir) => set(state => ({direction: dir})),
+  changeSex: (s) => set(state => ({sex: s})),
+  changeWork: (w) => set(state => ({ work: w }))
 }));
 
 const BasicSet = (id) => {
@@ -191,28 +190,55 @@ const PrivacySet = (id) => {
 }
 
 function ChangeInfo(info) {
-
+  const IDChange = userInfo(state => state.changeId);
+  const NameChange = userInfo(state => state.changeName);
+  const SexChange = userInfo(state => state.changeSex);
+  const WorkChange = userInfo(state => state.changeWork);
+  const DirectionChange = userInfo(state => state.changeDirection);
+  IDChange(info.userId);
+  NameChange(info.name);
+  SexChange(info.gender);
+  WorkChange(info.school);
+  DirectionChange(info.direction);
 }
 
-export function BasicInfoSet(props) {
-  let thisId = props.id;
-  const item = <div className="site-layout-content">
-    <Tabs tabPosition={'left'}>
-      <TabPane tab="基本设置" key="1">
-        <PageHeader title="基本设置"/>
-        <BasicSet id={thisId}/>
-      </TabPane>
-      <TabPane tab="隐私设置" key="2">
-        <PageHeader title="修改密码"/>
-        <PrivacySet id={thisId}/>
-      </TabPane>
-    </Tabs>
-  </div>
+export class BasicInfoSet extends React.Component {
+  state = {
+    id: this.props.id,
+    data: []
+  }
 
-  axios.post('', thisId)
-      .then(function (response) {
-        ChangeInfo(response);
-        return item;
+  constructor(props) {
+    super(props);
+    this.state = {id: props.id, data: []};
+  }
+  componentDidMount() {
+    let that = this;
+    axios({
+      method: 'post',
+      url: 'http://localhost:8080/admin/getUserDetails',
+      data: { userId: this.state.id },
+    }).then(function(res) {
+      console.log(res.data);
+      that.setState({
+        data: res.data,
       })
-      .catch(err => console.log(err));
+    })
+  }
+
+  render() {
+    ChangeInfo(this.state.data);
+    return <div className="site-layout-content">
+      <Tabs tabPosition={'left'}>
+        <TabPane tab="基本设置" key="1">
+          <PageHeader title="基本设置"/>
+          <BasicSet id={this.state.id}/>
+        </TabPane>
+        <TabPane tab="隐私设置" key="2">
+          <PageHeader title="修改密码"/>
+          <PrivacySet id={this.state.id}/>
+        </TabPane>
+      </Tabs>
+    </div>
+  }
 }

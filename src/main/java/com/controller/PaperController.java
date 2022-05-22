@@ -1,5 +1,6 @@
 package com.controller;
 
+import com.dao.PaperMapper;
 import com.domain.*;
 import com.service.*;
 import net.sf.json.JSON;
@@ -39,19 +40,42 @@ public class PaperController {
     private UserService userService;
     @Autowired
     private WriterService writerService;
+    @Autowired
+    private PaperMapper paperMapper;
     //获取用户笔记
     @CrossOrigin
-    @PostMapping("/myNotes")
+    @PostMapping("/myNotes/true")
     @ResponseBody
-    public JSONArray myNotes(@RequestParam String userId){
-        System.out.println(userId);
-        List<Note_and_extra_file> allNotes=noteAndFileService.selectMyNotes(userId);//所有数据
+    public JSONArray myNotes(@RequestBody Id userId){
+        System.out.println(userId.getUserId());
+        List<Note_and_extra_file> allNotes=noteAndFileService.selectMyNotes(userId.getUserId());//所有数据
         JSONArray json = new JSONArray();
         for(Note_and_extra_file note : allNotes){
+            if (note.getFlag()==1)
+                continue;
             JSONObject jo = new JSONObject();
             jo.put("note", note.getNote());
-            jo.put("overview", note.getOverview());
-            jo.put("extraFile",note.getExtraFile());
+            jo.put("title",paperMapper.selectPaperById(note.getId()).getTitle());
+            jo.put("id",note.getId());
+            json.add(jo);
+        }
+        System.out.println(json);
+        return json;
+    }
+    //获取用户笔记草稿
+    @CrossOrigin
+    @PostMapping("/myNotes/false")
+    @ResponseBody
+    public JSONArray myNoteDraft(@RequestBody Id userId){
+        System.out.println(userId.getUserId());
+        List<Note_and_extra_file> allNotes=noteAndFileService.selectMyNotes(userId.getUserId());//所有数据
+        JSONArray json = new JSONArray();
+        for(Note_and_extra_file note : allNotes){
+            if (note.getFlag()==0)
+                continue;
+            JSONObject jo = new JSONObject();
+            jo.put("note", note.getNote());
+            jo.put("title",paperMapper.selectPaperById(note.getId()).getTitle());
             jo.put("id",note.getId());
             json.add(jo);
         }
@@ -65,9 +89,12 @@ public class PaperController {
     @ResponseBody
     public JSONArray paper(){
         List<Paper> allPapers=paperService.selectNewPapers();//所有数据
+        System.out.println(allPapers.size());
         JSONArray json = new JSONArray();
         // 需要添加作者、发布人姓名、研究方向、发布会议
         for(Paper paper : allPapers){
+            if(paper.getFlag()==1)
+                continue;
             JSONObject jo = new JSONObject();
             jo.put("id", paper.getId());
             jo.put("literatureLink", paper.getLiteratureLink());
@@ -76,13 +103,18 @@ public class PaperController {
             jo.put("thesisType",paper.getThesisType());
             jo.put("title",paper.getTitle());
             jo.put("like",paper.getLike());
+            jo.put("writer",paper.getWriterName());
+            jo.put("publisher",paper.getPublisher());
+            jo.put("path",paper.getPath());
+            jo.put("publishMeeting",paper.getPublishMeeting());
             json.add(jo);
         }
+        System.out.println(json.size());
         return json;
     }
     //获取用户发布的论文
     @CrossOrigin
-    @PostMapping("/myPaper")
+    @PostMapping("/myPaper/true")
     @ResponseBody
     public JSONArray myPaper(@RequestBody Id userId){
         System.out.println(userId.getUserId());
@@ -90,6 +122,8 @@ public class PaperController {
         System.out.println(userId);
         JSONArray json = new JSONArray();
         for(Paper paper : allPapers){
+            if(paper.getFlag()==1)
+                continue;
             JSONObject jo = new JSONObject();
             jo.put("id", paper.getId());
             jo.put("literatureLink", paper.getLiteratureLink());
@@ -98,6 +132,40 @@ public class PaperController {
             jo.put("thesisType",paper.getThesisType());
             jo.put("title",paper.getTitle());
             jo.put("like",paper.getLike());
+            jo.put("writer",paper.getWriterName());
+            jo.put("publisher",paper.getPublisher());
+            jo.put("path",paper.getPath());
+            jo.put("publishMeeting",paper.getPublishMeeting());
+            json.add(jo);
+        }
+        System.out.println(json);
+        return json;
+    }
+    //获取用户草稿
+    @CrossOrigin
+    @PostMapping("/myPaper/false")
+    @ResponseBody
+    public JSONArray myDraft(@RequestBody Id userId){
+        System.out.println(userId.getUserId());
+        List<Paper> allPapers=paperService.selectMyPapers(userId.getUserId());//所有数据
+        System.out.println(userId);
+        JSONArray json = new JSONArray();
+        for(Paper paper : allPapers){
+            if (paper.getFlag()==0)
+                continue;
+            JSONObject jo = new JSONObject();
+            jo.put("id", paper.getId());
+            jo.put("literatureLink", paper.getLiteratureLink());
+            jo.put("publisherId",paper.getPublisherId());
+            jo.put("thesisDate",paper.getThesisDate());
+            jo.put("thesisType",paper.getThesisType());
+            jo.put("title",paper.getTitle());
+            jo.put("like",paper.getLike());
+            jo.put("writer",paper.getWriterName());
+            jo.put("publisher",paper.getPublisher());
+            jo.put("path",paper.getPath());
+            jo.put("publishMeeting",paper.getPublishMeeting());
+            jo.put("flag",paper.getFlag());
             json.add(jo);
         }
         System.out.println(json);
@@ -112,6 +180,8 @@ public class PaperController {
         List<Paper> papers=paperService.selectPapersByConditions(query);
         JSONArray json = new JSONArray();
         for(Paper paper : papers){
+            if(paper.getFlag()==1)
+                continue;
             JSONObject jo = new JSONObject();
             jo.put("id", paper.getId());
             jo.put("literatureLink", paper.getLiteratureLink());

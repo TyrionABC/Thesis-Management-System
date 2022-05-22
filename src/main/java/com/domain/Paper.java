@@ -19,7 +19,18 @@ public class Paper {
     String overview;
     String writerName;
     String publishMeeting;
+
+    public int getFlag() {
+        return flag;
+    }
+
+    public void setFlag(int flag) {
+        this.flag = flag;
+    }
+
     String publisher;
+    //表明是否为草稿，1为草稿
+    int flag;
     int like;
 
     public String getId() {
@@ -132,7 +143,8 @@ public class Paper {
                 ", writerName='" + writerName + '\'' +
                 ", publishMeeting='" + publishMeeting + '\'' +
                 ", publisher='" + publisher + '\'' +
-                ", like='" + like + '\'' +
+                ", flag='" + flag + '\'' +
+                ", like=" + like +
                 '}';
     }
 }

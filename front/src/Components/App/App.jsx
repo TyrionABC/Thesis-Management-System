@@ -26,14 +26,13 @@ import {
 import create from 'zustand';
 import { GetContentData, GetUniversalData } from "../Data/DataChart";
 import { Latest } from "../Thesis/Thesis";
+import MyThesis from "../Thesis/MyThesis";
+import MyColumn from "../Thesis/MyColumn";
 import { BasicInfoSet } from "./Info";
 import './App.css';
 import { Link } from 'react-router-dom';
 import { useLocation } from "react-router";
 import axios from "axios";
-
-const MyThesis = lazy(() => import('../Thesis/MyThesis'));
-const MyColumn = lazy(() => import('../Thesis/MyColumn'));
 
 const useStore = create(set => ({
   name: '',
@@ -265,7 +264,6 @@ function setContent(id) {
   contents[5] = '';
   contents[6] = <BasicInfoSet id={id}/>;
   contents[7] = '';
-  console.log(contents);
 }
 
 class MainContent extends React.Component {
@@ -295,7 +293,7 @@ class MainContent extends React.Component {
 
   render() {
     const { collapsed, num, isFocus } = this.state;
-    setContent(this.props.id);
+    setContent(this.state.id);
     return (
         <>
         <Layout

@@ -207,7 +207,7 @@ class LabbbApplicationTests {
     }
     @Test
     void selectMyPapers(){
-        System.out.println(paperMapper.getMyPapers("1216776075"));
+        System.out.println(paperMapper.getNewPapers());
     }
     @Test
     void updatePublish(){

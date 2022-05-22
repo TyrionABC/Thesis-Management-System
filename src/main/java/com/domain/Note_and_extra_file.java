@@ -17,6 +17,17 @@ public class Note_and_extra_file {
     @TableField("extra_file")
     private byte[] extraFile;
 
+    private int flag;
+
+
+    public int getFlag() {
+        return flag;
+    }
+
+    public void setFlag(int flag) {
+        this.flag = flag;
+    }
+
     public String getOverview() {
         return overview;
     }
@@ -65,6 +76,7 @@ public class Note_and_extra_file {
                 ", overview='" + overview + '\'' +
                 ", note='" + note + '\'' +
                 ", extraFile=" + Arrays.toString(extraFile) +
+                ", flag=" + flag +
                 '}';
     }
 }
