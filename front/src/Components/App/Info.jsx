@@ -195,25 +195,21 @@ function ChangeInfo(info) {
 }
 
 export function BasicInfoSet(props) {
-  let id = props.id;
-  let values = {
-    id: id,
-  };
+  let thisId = props.id;
   const item = <div className="site-layout-content">
     <Tabs tabPosition={'left'}>
       <TabPane tab="基本设置" key="1">
         <PageHeader title="基本设置"/>
-        <BasicSet id={id}/>
+        <BasicSet id={thisId}/>
       </TabPane>
       <TabPane tab="隐私设置" key="2">
         <PageHeader title="修改密码"/>
-        <PrivacySet id={id}/>
+        <PrivacySet id={thisId}/>
       </TabPane>
-
     </Tabs>
   </div>
 
-  axios.post('', values)
+  axios.post('', thisId)
       .then(function (response) {
         ChangeInfo(response);
         return item;

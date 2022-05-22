@@ -1,4 +1,4 @@
-import React, {useState, Suspense} from "react";
+import React from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Space, Table, Input, Button, PageHeader, Descriptions, Tabs, List } from 'antd';
 import "rsuite/dist/rsuite.min.css";
@@ -39,6 +39,7 @@ const llt = [{
   researchDirection: 'ML',
   meeting: 'Meeting_3',
 }];
+
 
 export class Latest extends React.Component {
   state = {
@@ -282,6 +283,77 @@ const note = [{
   content: 'This is a test for thesis 2.'
 }];
 
+function TableModule(newData) {
+  let title = newData;
+  let date = newData;
+  return <List
+      size="large"
+      header={<div>Header</div>}
+      footer={<div>Footer</div>}
+      description={date}
+      bordered
+      dataSource={title}
+      renderItem={item => <List.Item>{item}</List.Item>}
+  />
+}
+
+export class MyColumn extends React.Component {
+  state = {
+    data: '',
+    id: '',
+  }
+
+  getData(thisId) {
+    this.setState({
+      id: thisId,
+    });
+    axios.post('http://localhost:8080/admin/myNotes', thisId)
+        .then(response => {
+          response = response.data;
+          this.setState({
+            data: response,
+          }, )
+        })
+        .catch(err => console.log(err));
+  }
+
+  render() {
+    this.getData(this.props.id);
+    const { TabPane } = Tabs;
+    function callback(key) {
+      console.log(key);
+    }
+    const Tab = () => (
+        <Tabs defaultActiveKey="1" onChange={callback} centered>
+          <TabPane tab="草稿箱" key="1">
+            <TableModule data={this.state.data[0]}/>
+          </TabPane>
+          <TabPane tab="已发布" key="2">
+            <TableModule data={this.state.data[1]}/>
+          </TabPane>
+        </Tabs>
+    );
+    const routes = [
+      {
+        breadcrumbName: '内容管理',
+      },
+      {
+        breadcrumbName: '笔记管理',
+      }
+    ];
+    return <>
+      <PageHeader style={{background: '#fff'}} title="我的笔记" breadcrumb={{ routes }}>
+        <Descriptions>
+          <Descriptions.Item label="统计已发布笔记数">{ this.state.data.length }</Descriptions.Item>
+        </Descriptions>
+      </PageHeader>
+      <div className="site-layout-content">
+        <Tab/>
+      </div>
+    </>
+  }
+}
+
 const myWord = [
   {
     id: 2,
@@ -305,3 +377,66 @@ const myWord = [
     meeting: 'Meeting_3',
   },
 ];
+
+export class MyThesis extends React.Component {
+  state = {
+    id: '',
+    data: '',
+  }
+
+  constructor(props) {
+    super(props);
+    this.getData(props.id);
+  }
+
+  getData(thisId) {
+    const json = {
+      userId: thisId,
+    };
+    axios.post('http://localhost:8080/admin/myPaper', json)
+        .then(response => {
+          response = response.data;
+          this.setState({
+            id: thisId,
+            data: response,
+          });
+        })
+        .catch(err => console.log(err));
+  }
+
+  render () {
+    const { TabPane } = Tabs;
+    function callback(key) {
+      console.log(key);
+    }
+    console.log(this.state);
+    const Tab = () => (
+        <Tabs defaultActiveKey="1" onChange={callback} centered>
+          <TabPane tab="草稿箱" key="1">
+            <TableModule data={this.state.data[0]}/>
+          </TabPane>
+          <TabPane tab="已发布" key="2">
+            <TableModule data={this.state.data[0]}/>
+          </TabPane>
+        </Tabs>
+    );
+    const routes = [
+      {
+        breadcrumbName: '内容管理',
+      },
+      {
+        breadcrumbName: '文章管理',
+      }
+    ];
+  return <>
+    <PageHeader style={{background: '#fff'}} title="我的文章" breadcrumb={{ routes }}>
+      <Descriptions>
+        <Descriptions.Item label="统计已发布文章数">{ this.state.data.length }</Descriptions.Item>
+      </Descriptions>
+    </PageHeader>
+    <div className="site-layout-content">
+      <Tab/>
+    </div>
+    </>
+  }
+}

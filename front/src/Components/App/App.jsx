@@ -261,7 +261,7 @@ function setContent(id) {
   contents[1] = <MyThesis id={id}/>;
   contents[2] = <MyColumn id={id}/>;
   contents[3] = <GetContentData id={id}/>;
-  contents[4] = <GetUniversalData id={id}/>;
+  contents[4] = <GetUniversalData/>;
   contents[5] = '';
   contents[6] = <BasicInfoSet id={id}/>;
   contents[7] = '';
@@ -273,6 +273,7 @@ class MainContent extends React.Component {
     collapsed: false,
     num: 1,
     isFocus: false,
+    id: this.props.mail,
   };
 
   onCollapse = (collapsed) => {
@@ -294,8 +295,7 @@ class MainContent extends React.Component {
 
   render() {
     const { collapsed, num, isFocus } = this.state;
-    id = this.props.mail;
-    setContent(id);
+    setContent(this.props.id);
     return (
         <>
         <Layout
