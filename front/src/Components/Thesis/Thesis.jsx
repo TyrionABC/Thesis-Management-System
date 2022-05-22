@@ -7,40 +7,6 @@ import { SearchOutlined } from '@ant-design/icons';
 import './Thesis.css';
 import axios from 'axios';
 
-const llt = [{
-  id: 1,
-  title: '论文题目_1',
-  date: '3月8号',
-  writer: 'Cui',
-  publisher: 'Root',
-  likes: 45,
-  category: '理论证明型',
-  researchDirection: 'FE',
-  meeting: 'Meeting_1',
-
-}, {
-  id: 2,
-  title: '论文题目_2',
-  date: '2月17号',
-  writer: 'Liu',
-  publisher: 'Root',
-  likes: 343,
-  category: '综述型',
-  researchDirection: 'IOS',
-  meeting: 'Meeting_2',
-}, {
-  id: 3,
-  title: '论文题目_3',
-  date: '5月4号',
-  writer: 'Ma',
-  publisher: 'Root',
-  likes: 33,
-  category: '实验型',
-  researchDirection: 'ML',
-  meeting: 'Meeting_3',
-}];
-
-
 export class Latest extends React.Component {
   state = {
     searchText: '',
@@ -264,21 +230,3 @@ export class Latest extends React.Component {
       </>
   }
 }
-
-const note = [{
-  id: 2,
-  title: '摘要',
-  thesis: '论文_1',
-  date: '5月7日',
-  content: 'We provide the building blocks to enable the creation of a broad variety of rich text composition' +
-      ' experiences, from basic text styles to embedded media.Draft.js fits seamlessly into React applications, ' +
-      'abstracting away the details of rendering, selection, and input behavior with a familiar declarative API.' +
-      'The Draft.js model is built with immutable-js, offering an API with functional state updates and aggressively' +
-      ' leveraging data persistence for scalable memory usage.'
-}, {
-  id: 3,
-  title: '摘要_2',
-  thesis: '论文_2',
-  date: '5月8日',
-  content: 'This is a test for thesis 2.'
-}];

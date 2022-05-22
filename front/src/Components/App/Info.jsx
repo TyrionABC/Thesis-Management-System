@@ -11,18 +11,20 @@ const { TabPane } = Tabs;
 
 const userInfo = create(set => ({
   id: '',
-  name: 'jack',
-  direction: 'ML',
-  sex: 'male',
-  work: 'ECNU',
+  psw: '',
+  name: '',
+  direction: '',
+  sex: '',
+  work: '',
   changeId: (idn) => set(state => ({ id: idn })),
   changeName: (name) => set(state => ({name: name})),
   changeDirection: (dir) => set(state => ({direction: dir})),
   changeSex: (s) => set(state => ({sex: s})),
-  changeWork: (w) => set(state => ({ work: w }))
+  changeWork: (w) => set(state => ({ work: w })),
+  changePsw: (psw) => set(state => ({psw: psw}))
 }));
 
-const BasicSet = (id) => {
+const BasicSet = () => {
   const onFinish = (values: any) => {
     console.log('Success:', values);
     axios.post('', values)
@@ -102,8 +104,7 @@ const BasicSet = (id) => {
   );
 };
 
-const PrivacySet = (id) => {
-  // 根据 id 获取用户信息, userInfo(state => state.id);
+const PrivacySet = () => {
   const onFinish = (values: any) => {
     console.log('Success:', values);
     axios.post('', values)
@@ -116,6 +117,7 @@ const PrivacySet = (id) => {
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
+  const psw = userInfo(state => state.psw);
   return <Form
       labelCol={{ span: 4 }}
       wrapperCol={{ span: 8 }}
@@ -129,7 +131,15 @@ const PrivacySet = (id) => {
         {
           required: true,
           message: '请输入原密码',
-        }
+        },
+        ({getFieldValue}) => ({
+          validator(_, value) {
+            if(getFieldValue('originPassword') === psw) {
+              return Promise.resolve();
+            }
+            else return Promise.reject(new Error('原密码输入错误'));
+          }
+        })
       ]}
       hasFeedback
     >
@@ -195,11 +205,13 @@ function ChangeInfo(info) {
   const SexChange = userInfo(state => state.changeSex);
   const WorkChange = userInfo(state => state.changeWork);
   const DirectionChange = userInfo(state => state.changeDirection);
+  const PswChange = userInfo(state => state.changePsw);
   IDChange(info.userId);
   NameChange(info.name);
   SexChange(info.gender);
   WorkChange(info.school);
   DirectionChange(info.direction);
+  PswChange(info.password);
 }
 
 export class BasicInfoSet extends React.Component {
@@ -212,6 +224,7 @@ export class BasicInfoSet extends React.Component {
     super(props);
     this.state = {id: props.id, data: []};
   }
+
   componentDidMount() {
     let that = this;
     axios({
@@ -232,11 +245,11 @@ export class BasicInfoSet extends React.Component {
       <Tabs tabPosition={'left'}>
         <TabPane tab="基本设置" key="1">
           <PageHeader title="基本设置"/>
-          <BasicSet id={this.state.id}/>
+          <BasicSet/>
         </TabPane>
         <TabPane tab="隐私设置" key="2">
           <PageHeader title="修改密码"/>
-          <PrivacySet id={this.state.id}/>
+          <PrivacySet/>
         </TabPane>
       </Tabs>
     </div>
