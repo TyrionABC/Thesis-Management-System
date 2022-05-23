@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 // data: ['前端', '后端', 'Android', 'IOS', '软件测试', '人工智能', '机器学习', '深度学习', '数据库', '网络安全']
@@ -239,4 +240,55 @@ public class PaperController {
             return "true";
         }
     }
+    // data: ['前端', '后端', 'Android', 'IOS', '软件测试', '人工智能', '机器学习', '深度学习', '数据库', '网络安全']
+    //获取每个方向的我的论文的数目和点赞数
+    @CrossOrigin
+    @PostMapping("/LikeAndDirection")
+    @ResponseBody
+    public JSONArray getLikesAndDirection(@RequestBody Id userId){
+        List<MyPaper> myPapers=paperMapper.selectMyPaper(userId.getUserId());
+        JSONArray jsonArray=new JSONArray();
+        for (MyPaper myPaper:myPapers){
+            JSONObject jsonObject=new JSONObject();
+            jsonObject.put("direction",myPaper.getDirection());
+            jsonObject.put("likes",myPaper.getLikes());
+            jsonObject.put("num",myPaper.getNum());
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
+    }
+    //全站从当月往前十二个月以来，每个月发表的论文数目
+    @CrossOrigin
+    @PostMapping("/MonthAndPaper")
+    @ResponseBody
+    public JSONArray getPapersOfMonth(){
+        List<Integer> nums=paperService.getPaperOfMonth();
+        JSONArray jsonArray=new JSONArray();
+        int flag=0;
+        for (Integer num:nums){
+            jsonArray.add(num);
+            flag++;
+            if (flag>11)
+                break;
+        }
+        return jsonArray;
+    }
+    //用户从当天往前推一星期每天发表的论文数目
+    @CrossOrigin
+    @PostMapping("/DayAndPaper")
+    @ResponseBody
+    public JSONArray getPapersOfDay(@RequestBody Id userId){
+        System.out.println(userId);
+        List<Integer> nums=paperService.getPaperOfDay(userId.getUserId());
+        JSONArray jsonArray=new JSONArray();
+        int flag=0;
+        for (Integer num:nums){
+            jsonArray.add(num);
+            flag++;
+            if (flag>6)
+                break;
+        }
+        return jsonArray;
+    }
+
 }

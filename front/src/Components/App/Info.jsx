@@ -1,36 +1,22 @@
 import React from 'react';
 import {Button, Form, Input, PageHeader, Select, Tabs } from 'antd';
 import 'antd/dist/antd.css';
-import create from "zustand";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Option} from "antd/es/mentions";
 import '../Thesis/Thesis.css';
 import axios from "axios";
+import CryptoJS from "crypto-js";
 
 const { TabPane } = Tabs;
 
-const userInfo = create(set => ({
-  id: '',
-  psw: '',
-  name: '',
-  direction: '',
-  sex: '',
-  work: '',
-  changeId: (idn) => set(state => ({ id: idn })),
-  changeName: (name) => set(state => ({name: name})),
-  changeDirection: (dir) => set(state => ({direction: dir})),
-  changeSex: (s) => set(state => ({sex: s})),
-  changeWork: (w) => set(state => ({ work: w })),
-  changePsw: (psw) => set(state => ({psw: psw}))
-}));
-
-const BasicSet = () => {
+function BasicSet(props) {
   const onFinish = (values: any) => {
     console.log('Success:', values);
-    axios.post('', values)
+    axios.post('http://localhost:8080/admin/updateUser', values)
         .then(function (response) {
           console.log(response);
         })
+        .catch(err => console.log(err));
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -42,7 +28,6 @@ const BasicSet = () => {
           name="basic"
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 8 }}
-          initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
@@ -51,47 +36,50 @@ const BasicSet = () => {
         <Form.Item
             label="用户名"
             name="username"
-            rules={[{ message: 'Please input your username!' }]}
-            initialValue={userInfo(state => state.name)}
+            rules={[{ message: '请输入用户名', required: true }]}
         >
-          <Input />
+          <Input placeholder={props.info.name}/>
         </Form.Item>
 
-        <Form.Item name="gender" label="性别" initialValue={userInfo(state => state.sex)}>
+        <Form.Item name="gender"
+                   label="性别"
+                   rules={[{message: '请选择性别', required: true}]}>
+
           <Select
-              placeholder="请选择"
+              placeholder={props.info.gender}
               allowClear
           >
-            <Option value="male">男</Option>
-            <Option value="female">女</Option>
-            <Option value="other">其他</Option>
+            <Option value="男">男</Option>
+            <Option value="女">女</Option>
+            <Option value="其他">其他</Option>
           </Select>
         </Form.Item>
 
         <Form.Item
             label="学校/单位"
             name="work"
-            rules={[{ message: 'Please input your school/company!' }]}
-            initialValue={userInfo(state => state.work)}
+            rules={[{ message: '请输入学校/工作地点', required: true }]}
         >
-          <Input />
+          <Input placeholder={props.info.school}/>
         </Form.Item>
 
-        <Form.Item name="researchDirection" label="主研究方向" initialValue={userInfo(state => state.direction)}>
+        <Form.Item name="researchDirection"
+                   label="主研究方向"
+                   rules={[{message: '请选择研究方向', required: true}]}>
           <Select
-              placeholder="请选择"
+              placeholder={props.info.direction}
               allowClear
           >
-            <Option value="FE">前端</Option>
-            <Option value="BE">后端</Option>
-            <Option value="AND">Android</Option>
+            <Option value="前端">前端</Option>
+            <Option value="后端">后端</Option>
+            <Option value="Android">Android</Option>
             <Option value="IOS">IOS</Option>
-            <Option value="ST">软件测试</Option>
-            <Option value="AI">人工智能</Option>
-            <Option value="ML">机器学习</Option>
-            <Option value="DL">深度学习</Option>
-            <Option value="DB">数据库</Option>
-            <Option value="WS">网络安全</Option>
+            <Option value="软件测试">软件测试</Option>
+            <Option value="人工智能">人工智能</Option>
+            <Option value="机器学习">机器学习</Option>
+            <Option value="深度学习">深度学习</Option>
+            <Option value="数据库">数据库</Option>
+            <Option value="网络安全">网络安全</Option>
           </Select>
         </Form.Item>
 
@@ -104,10 +92,13 @@ const BasicSet = () => {
   );
 };
 
-const PrivacySet = () => {
+function PrivacySet(props) {
   const onFinish = (values: any) => {
     console.log('Success:', values);
-    axios.post('', values)
+    let jsonVal = {
+      password: CryptoJS.MD5(values['newPassword']).toString(),
+    }
+    axios.post('http://localhost:8080/admin/update', jsonVal)
         .then(function (response) {
           console.log(response);
         })
@@ -117,7 +108,7 @@ const PrivacySet = () => {
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
-  const psw = userInfo(state => state.psw);
+  const psw = props.info.password;
   return <Form
       labelCol={{ span: 4 }}
       wrapperCol={{ span: 8 }}
@@ -134,7 +125,7 @@ const PrivacySet = () => {
         },
         ({getFieldValue}) => ({
           validator(_, value) {
-            if(getFieldValue('originPassword') === psw) {
+            if(CryptoJS.MD5(getFieldValue('originPassword')).toString() === psw) {
               return Promise.resolve();
             }
             else return Promise.reject(new Error('原密码输入错误'));
@@ -199,19 +190,19 @@ const PrivacySet = () => {
   </Form>
 }
 
-function ChangeInfo(info) {
-  const IDChange = userInfo(state => state.changeId);
-  const NameChange = userInfo(state => state.changeName);
-  const SexChange = userInfo(state => state.changeSex);
-  const WorkChange = userInfo(state => state.changeWork);
-  const DirectionChange = userInfo(state => state.changeDirection);
-  const PswChange = userInfo(state => state.changePsw);
-  IDChange(info.userId);
-  NameChange(info.name);
-  SexChange(info.gender);
-  WorkChange(info.school);
-  DirectionChange(info.direction);
-  PswChange(info.password);
+function DoSet(props) {
+  return <div className="site-layout-content">
+    <Tabs tabPosition={'left'}>
+      <TabPane tab="基本设置" key="1">
+        <PageHeader title="基本设置"/>
+        <BasicSet info={props.info}/>
+      </TabPane>
+      <TabPane tab="隐私设置" key="2">
+        <PageHeader title="修改密码"/>
+        <PrivacySet info={props.info}/>
+      </TabPane>
+    </Tabs>
+  </div>
 }
 
 export class BasicInfoSet extends React.Component {
@@ -240,18 +231,6 @@ export class BasicInfoSet extends React.Component {
   }
 
   render() {
-    ChangeInfo(this.state.data);
-    return <div className="site-layout-content">
-      <Tabs tabPosition={'left'}>
-        <TabPane tab="基本设置" key="1">
-          <PageHeader title="基本设置"/>
-          <BasicSet/>
-        </TabPane>
-        <TabPane tab="隐私设置" key="2">
-          <PageHeader title="修改密码"/>
-          <PrivacySet/>
-        </TabPane>
-      </Tabs>
-    </div>
+    return <DoSet info={this.state.data}/>
   }
 }

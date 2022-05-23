@@ -76,7 +76,6 @@ function BottomPart() {
 }
 
 function Name() {
-  const url = useStore(state => state.image);
   const name = useStore(state => state.name);
   return <>
     <Avatar size={'large'}
@@ -141,13 +140,15 @@ function SearchResult(props) {
     </>
 }
 
+let contents = [];
+
 const InnerForm = () => {
   const onFinish = (values: any) => {
     if(!values['title'] && !values['path'] && !values['thesisType']
         && !values['overview'] && !values['writerName'] && !values['publisher']
         && !values['publishMeeting']) alert("搜索条件不能全为空!");
     console.log('Success:', values);
-    // 向后端请求论文列表, 接收论文列表
+    // 请求论文列表, 接收论文列表
     axios.post('http://localhost:8080/admin/select', values)
         .then(function (response) {
           console.log(response);
@@ -251,10 +252,6 @@ const items = [
   getItem('文章搜索', '8', <SearchOutlined />),
 ];
 
-let id = "";
-
-let contents = [];
-
 function setContent(id) {
   contents[0] = <Latest/>;
   contents[1] = <MyThesis id={id}/>;
@@ -263,7 +260,6 @@ function setContent(id) {
   contents[4] = <GetUniversalData/>;
   contents[5] = '';
   contents[6] = <BasicInfoSet id={id}/>;
-  contents[7] = '';
 }
 
 class MainContent extends React.Component {
@@ -308,7 +304,6 @@ class MainContent extends React.Component {
             <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} onClick={this.onClick}/>
           </Sider>
           <Layout className="site-layout" menu>
-            <Suspense fallback={<div>加载中...</div>}>
             <Content
                 style={{
                   margin: '8px 16px',
@@ -326,7 +321,6 @@ class MainContent extends React.Component {
                 <InnerForm />
               </Modal>
             </Content>
-            </Suspense>
             <Footer
                 style={{
                   textAlign: 'center',

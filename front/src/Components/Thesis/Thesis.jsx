@@ -136,8 +136,12 @@ export class Latest extends React.Component {
         dataIndex: 'thesisDate',
         key: 'thesisDate',
         width: '10%',
-        ...this.getColumnSearchProps('date'),
-        sorter: (a, b) => a.date.localeCompare(b.date),
+        ...this.getColumnSearchProps('thesisDate'),
+        sorter: (a, b) => {
+          let ta = new Date(a.thesisDate).getTime();
+          let tb = new Date(b.thesisDate).getTime();
+          return ta - tb;
+        },
         sortDirections: ['descend', 'ascend'],
       },
       {
@@ -152,29 +156,29 @@ export class Latest extends React.Component {
         dataIndex: 'thesisType',
         key: 'thesisType',
         width: '10%',
-        ...this.getColumnSearchProps('category'),
+        ...this.getColumnSearchProps('thesisType'),
       },
       {
         title: '研究方向',
-        dataIndex: 'researchDirection',
-        key: 'researchDirection',
+        dataIndex: 'path',
+        key: 'path',
         width: '10%',
-        ...this.getColumnSearchProps('researchDirection'),
+        ...this.getColumnSearchProps('path'),
       },
       {
         title: '发布会议',
-        dataIndex: 'meeting',
-        key: 'meeting',
+        dataIndex: 'publishMeeting',
+        key: 'publishMeeting',
         width: '10%',
-        ...this.getColumnSearchProps('meeting'),
+        ...this.getColumnSearchProps('publishMeeting'),
       },
       {
         title: '点赞数',
         dataIndex: 'like',
         key: 'like',
         width: '10%',
-        ...this.getColumnSearchProps('likes'),
-        sorter: (a, b) => a.likes.valueOf() - b.likes.valueOf(),
+        ...this.getColumnSearchProps('like'),
+        sorter: (a, b) => a.like - b.like,
         sortDirections: ['descend', 'ascend'],
       },
     ];

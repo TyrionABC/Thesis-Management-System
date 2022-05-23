@@ -4,6 +4,7 @@ import myChart from "echarts-for-react";
 import '../Thesis/Thesis.css'
 import {Descriptions, PageHeader} from "antd";
 import axios from "axios";
+import {CalculatorOutlined} from "@ant-design/icons";
 
 function CurentTime() {
   var now = new Date();
@@ -30,76 +31,147 @@ function CurentTime() {
   return(clock);
 }
 
-export const GetContentData = (props) => {
-  const routes = [
-  {
-    breadcrumbName: '数据中心',
-  },
-  {
-    breadcrumbName: '内容数据',
+export class GetContentData extends React.Component {
+  state = {
+    data: [],
+    id: '',
   }
-];
-  return <>
-    <PageHeader style={{background: '#fff'}} title="近期文章发布趋势" breadcrumb={{ routes }}>
-      <Descriptions>
-        <Descriptions.Item label="更新时间">{CurentTime()}</Descriptions.Item>
-      </Descriptions>
-    </PageHeader>
-    <div className="site-layout-content">
-      <Counting id={props.id}/>
-    </div>
-  </>
+
+  constructor(props) {
+    super(props);
+    this.state = { data: [], id: props.id };
+  }
+
+  componentDidMount() {
+    let that = this;
+    axios({
+      method: 'post',
+      url: 'http://localhost:8080/admin/LikeAndDirection',
+      data: { userId: this.state.id },
+    }).then(function(res) {
+      console.log(res.data);
+      that.setState({
+        data: res.data,
+      })
+    })
+  }
+
+  render() {
+    const routes = [
+      {
+        breadcrumbName: '数据中心',
+      },
+      {
+        breadcrumbName: '内容数据',
+      }
+    ];
+    return <>
+      <PageHeader style={{background: '#fff'}} title="近期文章发布趋势" breadcrumb={{routes}}>
+        <Descriptions>
+          <Descriptions.Item label="更新时间">{CurentTime()}</Descriptions.Item>
+        </Descriptions>
+      </PageHeader>
+      <div className="site-layout-content">
+        <Category data={this.state.data}/>
+        <Counting id={this.state.id}/>
+      </div>
+    </>
+  }
 }
 
-const Counting: React.FC = (props) => {
-  let data;
-  let day;
-  let values = {
-    id: props.id,
-  };
-  axios.post('', values)
-      .then(function (response) {
-        console.log(response);
-        data = response.data[0];
-        day = response.data[0];
+class Counting extends React.Component {
+  state = {
+    data: [],
+    id: '',
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = { data: [], id: props.id };
+  }
+
+  componentDidMount() {
+    let that = this;
+    axios({
+      method: 'post',
+      url: 'http://localhost:8080/admin/DayAndPaper',
+      data: { userId: this.state.id },
+    }).then(function(res) {
+      console.log(res.data);
+      that.setState({
+        data: res.data,
       })
-      .catch(err => console.log(err));
-  const options = {
-    title: {
-      text: "论文数量"
-    },
-    xAxis: {
-      type: 'category',
-      data: day,
-    },
-    yAxis: {
-      type: 'value',
-    },
-    series: [
-      {
-        data: data,
-        type: 'line',
-        smooth: true,
+    })
+  }
+
+  setDay() {
+    let today = new Date();
+    let list = [];
+    for(let i = 4; i >= 0; i--) {
+      let week = (today.getDay() - (4 - i) + 7) % 7;
+      let str;
+      if (week === 0) {
+        str = "星期日";
+      } else if (week === 1) {
+        str = "星期一";
+      } else if (week === 2) {
+        str = "星期二";
+      } else if (week === 3) {
+        str = "星期三";
+      } else if (week === 4) {
+        str = "星期四";
+      } else if (week === 5) {
+        str = "星期五";
+      } else if (week === 6) {
+        str = "星期六";
+      }
+      list[i] = str;
+    }
+    return list;
+  }
+
+  render() {
+    let data = this.state.data;
+    let day = this.setDay();
+    if(day.length === 0) day[0] = '论文为空'
+    const options = {
+      title: {
+        text: "论文数量"
       },
-    ],
-    tooltip: {
-      trigger: 'axis',
-    },
-  };
+      xAxis: {
+        type: 'category',
+        data: day,
+      },
+      yAxis: {
+        type: 'value',
+      },
+      series: [
+        {
+          data: data,
+          type: 'line',
+          smooth: true,
+        },
+      ],
+      tooltip: {
+        trigger: 'axis',
+      },
+    };
 
-  return <ReactECharts option={options} style={{ height: 300 }} opts={{ renderer: 'svg' }}/>
-};
+    return <ReactECharts option={options} style={{height: 300}} opts={{renderer: 'svg'}}/>
+  }
+}
 
-const Category: React.FC = () => {
-  let thesisCount;
-  let likeCount;
-  axios.post('')
-      .then(function (response) {
-        console.log(response);
-        thesisCount = response.data[0];
-        likeCount = response.data[0];
-      })
-      .catch(err => console.log(err));
+const Category: React.FC = (props) => {
+  let dt = props.data;
+  let thesisCount = [];
+  let likeCount = [];
+  let directions = [];
+  console.log(dt[0]);
+  for(let i = 0; i < dt.length; i++) {
+    directions[i] = dt[i]['direction'];
+    likeCount[i] = dt[i]['likes'];
+    thesisCount[i] = dt[i]['num'];
+  }
   const option = {
     title: {
       text: '研究方向'
@@ -109,7 +181,7 @@ const Category: React.FC = () => {
       data:['我的论文', '我的点赞']
     },
     xAxis: {
-      data: ['前端', '后端', 'Android', 'IOS', '软件测试', '人工智能', '机器学习', '深度学习', '数据库', '网络安全']
+      data: directions
     },
     yAxis: {},
     series: [{
@@ -131,106 +203,96 @@ const Category: React.FC = () => {
       />
 }
 
-export const GetUniversalData = () => {
-  let data = [];
-  axios.post('')
-      .then(function (response) {
-        console.log(response);
-        data.push(response.data[0]);
+export class GetUniversalData extends React.Component {
+  state = {
+    data: [],
+  }
+
+  constructor() {
+    super();
+    this.state = { data: [] };
+  }
+
+  componentDidMount() {
+    let that = this;
+    axios({
+      method: 'post',
+      url: 'http://localhost:8080/admin/MonthAndPaper',
+      data: '',
+    }).then(function(res) {
+      console.log(res.data);
+      that.setState({
+        data: res.data,
       })
-      .catch(err => console.log(err));
-  function randomData() {
-    now = new Date(+now + oneDay);
-    value = value + Math.random() * 21 - 10;
-    return {
-      name: now.toString(),
-      value: [
-        [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'),
-        Math.round(value)
-      ]
-    };
+    });
   }
-  let now = new Date(1997, 9, 3);
-  let oneDay = 24 * 3600 * 1000;
-  let value = Math.random() * 1000;
-  for (var i = 0; i < 1000; i++) {
-    data.push(randomData());
-  }
-  let option = {
-    title: {
-      text: '全站文章发布趋势'
-    },
-    tooltip: {
-      trigger: 'axis',
-      formatter: function (params) {
-        params = params[0];
-        var date = new Date(params.name);
-        return (
-            date.getDate() +
-            '/' +
-            (date.getMonth() + 1) +
-            '/' +
-            date.getFullYear() +
-            ' : ' +
-            params.value[1]
-        );
-      },
-      axisPointer: {
-        animation: false
-      }
-    },
-    xAxis: {
-      type: 'time',
-      splitLine: {
-        show: false
-      }
-    },
-    yAxis: {
-      type: 'value',
-      boundaryGap: [0, '100%'],
-      splitLine: {
-        show: false
-      }
-    },
-    series: [
-      {
-        name: 'Fake Data',
-        type: 'line',
-        showSymbol: false,
-        data: data
-      }
-    ]
-  };
-  setInterval(function () {
-    for (var i = 0; i < 5; i++) {
-      data.shift();
-      data.push(randomData());
+
+  setData() {
+    let date = new Date();
+    let len = this.state.data.length;
+    let list = [];
+    for(let i = 0; i < len; i++) {
+      let month = date.getMonth();
+      month++;
+      let val = (month - i + 12) % 12;
+      list[len - i - 1] = "" + val + "月";
     }
-    myChart.setOption({
+    return list;
+  }
+
+  render() {
+    let data = this.state.data;
+    let month = this.setData();
+    let option = {
+      title: {
+        text: '全站文章发布趋势'
+      },
+      tooltip: {
+        trigger: 'axis',
+
+        axisPointer: {
+          animation: false
+        }
+      },
+      xAxis: {
+        splitLine: {
+          show: false
+        },
+        data: month
+      },
+      yAxis: {
+        type: 'value',
+        splitLine: {
+          show: false
+        },
+      },
       series: [
         {
+          name: 'Data',
+          type: 'line',
+          showSymbol: false,
           data: data
         }
       ]
-    });
-  }, 1000);
-  const routes = [
-    {
-      breadcrumbName: '数据中心',
-    },
-    {
-      breadcrumbName: '全站数据',
-    }
-  ];
-  return <>
-      <PageHeader style={{background: '#fff'}} title="全站文章发布趋势" breadcrumb={{ routes }}>
+    };
+
+    const routes = [
+      {
+        breadcrumbName: '数据中心',
+      },
+      {
+        breadcrumbName: '全站数据',
+      }
+    ];
+    return <>
+      <PageHeader style={{background: '#fff'}} title="全站文章发布趋势" breadcrumb={{routes}}>
         <Descriptions>
           <Descriptions.Item label="更新时间">{CurentTime()}</Descriptions.Item>
         </Descriptions>
       </PageHeader>
-    <div className="site-layout-content">
-      <ReactECharts option={option} style={{ height: 500 }}/>
-      <Category/>
-    </div>
+      <div className="site-layout-content">
+        <ReactECharts option={option} style={{height: 500}}/>
+      </div>
     </>
+  }
 }

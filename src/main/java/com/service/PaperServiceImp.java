@@ -4,22 +4,19 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.dao.PaperMapper;
-import com.domain.Paper;
-import com.domain.Direction;
-import com.domain.Paper_Basic_info;
-import com.domain.Query;
+import com.dao.WriterMapper;
+import com.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class PaperServiceImp implements PaperService{
     @Autowired
     private PaperMapper paperMapper;
+    @Autowired
+    private WriterMapper writerMapper;
     @Override
     public boolean insertPaper(Paper_Basic_info paper) {
         if (paperMapper.selectPaperByTitle(paper.getTitle())!=null)
@@ -94,8 +91,51 @@ public class PaperServiceImp implements PaperService{
 
     @Override
     public List<Paper> selectNewPapers() {
+        int flag=0;
         List<Paper> papers=paperMapper.getNewPapers();
-        return papers;
+        List<Paper> newPapers=new ArrayList<>();
+        for(Paper paper:papers){
+            flag=0;
+            for(Paper newPaper:newPapers){
+                if (paper.getId().equals(newPaper.getId())){
+                    flag=1;
+                    break;
+                }
+            }
+            if (flag==1)
+                continue;
+            if (writerMapper.selectWritersById(paper.getId()).size()>1){
+                String str1="";
+                String str2="";
+                for(Writer writer:writerMapper.selectWritersById(paper.getId())){
+                    if (writer.getLevel()==1){
+                        str1+="第一作者:"+writer.getWriterName()+";";
+                    }
+
+                    else{
+                        str2+="第二作者:"+writer.getWriterName()+"";
+                    }
+                }
+                paper.setWriterName(str1+str2);
+            }
+            newPapers.add(paper);
+        }
+        return newPapers;
+    }
+
+    @Override
+    public List<MyPaper> getMyPapers(String userId) {
+        return paperMapper.selectMyPaper(userId);
+    }
+
+    @Override
+    public List<Integer> getPaperOfMonth() {
+        return paperMapper.getPapersOfMonth();
+    }
+
+    @Override
+    public List<Integer> getPaperOfDay(String userId) {
+        return paperMapper.getPapersOfDay(userId);
     }
 
 }

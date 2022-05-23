@@ -5,6 +5,7 @@ import com.domain.*;
 //import com.domain.Query;
 import org.apache.ibatis.annotations.*;
 
+import java.util.Date;
 import java.util.List;
 
 //⽀持按照研究⽅向、论⽂标题、论⽂类型、论⽂摘要模糊查询、作者、发布⼈、
@@ -76,6 +77,17 @@ public interface PaperMapper extends BaseMapper<Paper_Basic_info> {
 
     @Select("select * from paper_basic_info where title=#{title}")
     Paper_Basic_info selectPaperByTitle(String title);
+
+    @Select("select count(*) as num,direction.parent_direction_name as direction,sum(paper_basic_info.`like`) as likes " +
+            "from direction inner join belong on direction.direction_name=belong.direction_name INNER JOIN paper_basic_info on paper_basic_info.id=belong.id " +
+            "WHERE paper_basic_info.publisher_id=#{userId} GROUP BY direction.parent_direction_name")
+    List<MyPaper> selectMyPaper(String userId);
+
+    @Select("SELECT count(*) FROM paper_basic_info WHERE flag=0 GROUP BY DATE_FORMAT(thesis_date,'%Y-%m') ORDER BY DATE_FORMAT(thesis_date,'%Y-%m') DESC")
+    List<Integer> getPapersOfMonth();
+
+    @Select("select count(*) FROM paper_basic_info WHERE flag=0 and paper_basic_info.publisher_id=#{userId} GROUP BY DATE_FORMAT(thesis_date,'%Y-%m-%d') ORDER BY DATE_FORMAT(thesis_date,'%Y-%m-%d') DESC")
+    List<Integer> getPapersOfDay(String userId);
 
 
 

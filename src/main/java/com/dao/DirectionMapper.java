@@ -11,4 +11,5 @@ public interface DirectionMapper extends BaseMapper<Direction> {
     Direction selectDirectionByName(String name);
     @Delete("delete from direction where direction_name=#{name}")
     void deleteDirectionByName(String name);
+
 }

@@ -77,7 +77,11 @@ export default class MyThesis extends React.Component {
                 dataIndex: 'thesisDate',
                 key: 'thesisDate',
                 width: '10%',
-                sorter: (a, b) => a.date.localeCompare(b.date),
+                sorter: (a, b) => {
+                    let ta = new Date(a.thesisDate).getTime();
+                    let tb = new Date(b.thesisDate).getTime();
+                    return ta - tb;
+                },
                 sortDirections: ['descend', 'ascend'],
             },
             {
@@ -109,7 +113,7 @@ export default class MyThesis extends React.Component {
                 dataIndex: 'like',
                 key: 'like',
                 width: '10%',
-                sorter: (a, b) => a.likes.valueOf() - b.likes.valueOf(),
+                sorter: (a, b) => a.like - b.like,
                 sortDirections: ['descend', 'ascend'],
             },
         ];

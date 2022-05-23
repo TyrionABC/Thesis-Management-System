@@ -1,6 +1,7 @@
 package com.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.domain.MyPaper;
 import com.domain.Paper;
 import com.domain.Paper_Basic_info;
 import com.domain.Query;
@@ -19,4 +20,7 @@ public interface PaperService {
     List<Paper> selectPapersByConditions(Query query);
     List<Paper> selectMyPapers(String userId);
     List<Paper> selectNewPapers();
+    List<MyPaper> getMyPapers(String userId);
+    List<Integer> getPaperOfMonth();
+    List<Integer> getPaperOfDay(String userId);
 }
