@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.domain.Direction;
 import com.service.DirectionService;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -22,67 +25,75 @@ import java.util.Map;
 public class DirectionController {
     @Autowired
     private DirectionService directionService;
-    //分页查询
-    @GetMapping("/direction")
-    public String types(Model model) {
-        QueryWrapper<Direction> queryWrapper=new QueryWrapper<>();
-        queryWrapper.orderByDesc("direction_name");
-        Map<String,Object> pageMap=directionService.selectPage(1,4,queryWrapper);
-        model.addAttribute("pageMap",pageMap);
-        return "admin/direction";
+    //查看所有方向
+    @CrossOrigin
+    @GetMapping("/getAllDirections")
+    @ResponseBody
+    public JSONArray getAll() {
+        List<Direction> directions=directionService.selectAll();
+        JSONArray jsonArray=new JSONArray();
+        for(Direction direction:directions){
+            JSONObject jsonObject=new JSONObject();
+            jsonObject.put("directionName",direction.getDirectionName());
+            jsonObject.put("parentDirectionName",direction.getParentDirectionName());
+            jsonObject.put("level",direction.getLevel());
+            jsonObject.put("path",direction.getPath());
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
     }
-    //尚未完成、、、、、、
-    @GetMapping("/direction/input")
-    public String input(Model model){
-        model.addAttribute("direction", new Direction());
-        return "admin/direction-input";
-    }
-    //查找某方向
-    @GetMapping("/direction/select/{directionName}")
-    public String editInput(@PathVariable String directionName, Model model) {
+    //查找某方向,需要传入方向名称
+    @CrossOrigin
+    @GetMapping("/getDirection/{directionName}")
+    @ResponseBody
+    public JSONObject editInput(@PathVariable String directionName) {
+        System.out.println(directionName);
+        JSONObject jsonObject=new JSONObject();
         Direction direction = directionService.selectDirectionByName(directionName);
+        jsonObject.put("directionName",direction.getDirectionName());
+        jsonObject.put("parentDirectionName",direction.getParentDirectionName());
+        jsonObject.put("level",direction.getLevel());
+        jsonObject.put("path",direction.getPath());
         System.out.println(direction);
-        model.addAttribute("direction", direction);
-        return "/admin/direction-input";
+        return jsonObject;
     }
-    //删除某方向
-    @DeleteMapping("/direction/delete/{directionName}")
-    public String deleteDirection(@PathVariable(value = "directionName") String directionName, RedirectAttributes attributes) {
-        directionService.deleteDirectionByName(directionName);
-        attributes.addFlashAttribute("message", "删除成功");
-        return "redirect:/admin/direction";
+    //删除某方向,该方向存在则删除，将其所有子方向改为一级方向并返回true；不存在则返回false
+    @CrossOrigin
+    @GetMapping("/deleteDirection/{directionName}")
+    @ResponseBody
+    public String deleteDirection(@PathVariable(value = "directionName") String directionName) {
+        if(directionService.selectDirectionByName(directionName)!=null){
+            directionService.deleteDirectionByName(directionName);
+            return "true";
+        }
+        else
+            return "false";
     }
-    //新增方向
-    @PostMapping("/direction")
-    public String post(@RequestBody Direction direction, BindingResult result, RedirectAttributes attributes) {
-        if(direction.getDirectionName()==null||"".equals(direction.getDirectionName())){
-            attributes.addFlashAttribute("message", "请输入方向的名称");
-            return "admin/direction-input";
-        }
-        Direction direction1 = directionService.selectDirectionByName(direction.getDirectionName());
-        if (direction1 != null){
-            attributes.addFlashAttribute("message", "不可添加重复的方向");
-            return "admin/direction-input";
-        }
-        directionService.insertDirection(direction);
-        attributes.addFlashAttribute("message", "新增成功");
-        return "redirect:/admin/direction";
+    //新增方向,要在前端校验是否为空
+    @CrossOrigin
+    @PostMapping("/insertDirection")
+    @ResponseBody
+    public String insert(@RequestBody Direction direction) {
+        boolean flag=directionService.insertDirection(direction);
+        if (flag)
+            return "true";
+        else
+            return "false";
     }
-    //更新方向
-    @PostMapping("/direction/{directionName}")
-    public String editPost(@RequestBody Direction direction,@PathVariable String directionName, RedirectAttributes attributes) throws NotFoundException {
-        if(directionName==null){
-            attributes.addFlashAttribute("message", "被更新方向的名称不可为空");
-            return "admin/direction-input";
-        }
+    //更新方向,要传入方向名和父方向和原方向名,若不传父方向则默认将其改为一级方向
+    @CrossOrigin
+    @PostMapping("/updateDirection/{directionName}")
+    @ResponseBody
+    public String editPost(@PathVariable String directionName,@RequestBody Direction direction) throws NotFoundException {
         Direction direction1=directionService.selectDirectionByName(directionName);
-        if (direction1==null){
-            attributes.addFlashAttribute("message", "要修改的方向不存在");
-            return "admin/direction-input";
+        if (direction1==null){//要更改的对象不存在
+            return "false";
+        }
+        else if(directionService.selectDirectionByName(direction.getDirectionName())!=null){
+            return "false";//要改成的方向名已经存在
         }
         directionService.updateDirection(directionName,direction);
-        attributes.addFlashAttribute("message", "新增成功");
-        return "redirect:/direction";
+        return "true";
     }
 
 }

@@ -1,10 +1,10 @@
 package com.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.dao.PaperMapper;
-import com.dao.WriterMapper;
+import com.dao.*;
 import com.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +17,16 @@ public class PaperServiceImp implements PaperService{
     private PaperMapper paperMapper;
     @Autowired
     private WriterMapper writerMapper;
+    @Autowired
+    private BelongMapper belongMapper;
+    @Autowired
+    private CommentMapper commentMapper;
+    @Autowired
+    private NoteAndFileMapper noteAndFileMapper;
+    @Autowired
+    private PublishMapper publishMapper;
+    @Autowired
+    private ReferenceMapper referenceMapper;
     @Override
     public boolean insertPaper(Paper_Basic_info paper) {
         if (paperMapper.selectPaperByTitle(paper.getTitle())!=null)
@@ -36,8 +46,15 @@ public class PaperServiceImp implements PaperService{
     public boolean deletePaperById(String id) {
         if(paperMapper.selectPaperById(id)==null)
             return false;//没有要删除的论文
-        else
-        paperMapper.deletePaperById(id);
+        else{
+            belongMapper.deleteById(id);
+            commentMapper.deleteByPaperId(id);
+            noteAndFileMapper.deleteNoteById(id);
+            publishMapper.deleteByPaperId(id);
+            referenceMapper.deleteReferenceById(id);
+            writerMapper.deleteWriterByPaperId(id);
+            paperMapper.deletePaperById(id);
+        }
         return true;
     }
 

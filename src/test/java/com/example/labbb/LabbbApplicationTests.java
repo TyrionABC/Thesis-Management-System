@@ -41,6 +41,8 @@ class LabbbApplicationTests {
     private CommentService commentService;
     @Autowired
     private CommentMapper commentMapper;
+    @Autowired
+    private WriterMapper writerMapper;
     @Test
     void contextLoads() {
         List<User> users=userMapper.selectList(null);
@@ -195,7 +197,7 @@ class LabbbApplicationTests {
         comment.setId("0");
         comment.setContent("长风破浪会有时，直挂云帆济沧海");
         comment.setUserId("1216776075");
-        commentService.insert(comment,"d25bc80e-4");
+        commentService.insert(comment);
     }
     @Test
     void deleteComment(){
@@ -233,7 +235,25 @@ class LabbbApplicationTests {
     }
     @Test
     void getNewPapers(){
-        System.out.println(paperMapper.getNewPapers());
+        System.out.println(paperService.selectNewPapers());
     }
-
+    @Test
+    void getWriters(){
+        System.out.println(writerMapper.selectWritersById("6da6d0ed-c"));
+    }
+    @Test
+    void getMyPaper(){
+        System.out.println(paperService.getMyPapers("1216776075@qq.com"));
+    }
+    @Test
+    void tt(){
+        Direction direction=new Direction();
+        direction.setPath("后端");
+        direction.setDirectionName("555");
+        direction.setParentDirectionName("后端");
+        direction.setLevel(2);
+        directionMapper.updateByName("22",direction);
+        //System.out.println(directionMapper.selectDirectionByParent("后端"));
+        //System.out.println(userMapper.selectUserByIdAndPassword("1216776075@qq.com","9e85800c0e21ad360ac3a86f3abd6bd8"));
+    }
 }

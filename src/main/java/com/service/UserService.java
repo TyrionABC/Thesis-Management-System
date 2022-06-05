@@ -5,6 +5,9 @@ import com.domain.User;
 import com.util.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
 //MD5Utils.code(password)
 @Service
 public class UserService {
@@ -36,5 +39,15 @@ public class UserService {
     }
     public void updateUser(User user){
         userMapper.updateById(user);
+    }
+    public List<User> getAll(){
+        return userMapper.selectList(null);
+    }
+    public List<User> getUsers(User user){
+        return userMapper.selectUsers(user);
+    }
+
+    public void updateAccess(String userId){
+        userMapper.updateUserPermission(userId);
     }
 }

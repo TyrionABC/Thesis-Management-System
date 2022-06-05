@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,21 +17,24 @@ public class CommentServiceImp implements CommentService{
     @Autowired
     private CommentMapper commentMapper;
     @Override
-    public void insert(Comment comment,String parentId) {
+    public void insert(Comment comment) {
         String id = UUID.randomUUID().toString().substring(0,10);
         QueryWrapper<Comment> queryWrapper=new QueryWrapper<>();
         queryWrapper.eq("comment_id",id);
         while (commentMapper.selectOne(queryWrapper)!=null){
             id=UUID.randomUUID().toString().substring(0,10);
         }
+        comment.setDate(new Date());
         comment.setCommentId(id);
-        comment.setParentCommentId(parentId);
         commentMapper.insert(comment);
-
     }
 
     @Override
     public void delete(String commentId) {
+        List<Comment> comments=commentMapper.selectCommentsByParent(commentId);
+        for(Comment comment:comments){
+            comment.setParentCommentId(null);
+        }
         QueryWrapper<Comment> queryWrapper=new QueryWrapper<>();
         queryWrapper.eq("comment_id",commentId);
         commentMapper.delete(queryWrapper);

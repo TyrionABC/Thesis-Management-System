@@ -2,6 +2,7 @@ package com.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.domain.Comment;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -13,4 +14,8 @@ public interface CommentMapper extends BaseMapper<Comment> {
     List<Comment> selectRoots(String id);
     @Select("select * from comment where parent_comment_id=#{commentId}")
     List<Comment> selectReplies(String commentId);
+    @Delete("delete from comment where id=#{paperId}")
+    void deleteByPaperId(String paperId);
+    @Select("select * from comment where parent_comment_id=#{id}")
+    List<Comment> selectCommentsByParent(String id);
 }

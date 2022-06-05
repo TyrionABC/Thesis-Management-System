@@ -3,6 +3,7 @@ package com.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.domain.Paper_Basic_info;
 import com.domain.Paper_publish;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -22,6 +23,9 @@ public interface PublishMapper extends BaseMapper<Paper_publish> {
             "</where>"+
             "</script>"})
     List<Paper_Basic_info> selectPaperByPublishInfo(@Param("publish") Paper_publish publish);
+
+    @Delete("delete from paper_publish where id=#{id}")
+    void deleteByPaperId(String id);
 //    @Select({"<script>"+
 //            "select * from paper_publish left join paper_basic_info pbi on pbi.id = paper_publish.id"+
 //            "<where>"+

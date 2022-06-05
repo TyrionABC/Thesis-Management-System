@@ -202,10 +202,10 @@ public class PaperController {
     }
     //删除论文
     @CrossOrigin
-    @PostMapping("/delete")
+    @PostMapping("/deletePaper")
     @ResponseBody
-    public String paper(@RequestParam String id){
-        boolean flag=paperService.deletePaperById(id);
+    public String paper(@RequestBody Paper paper){
+        boolean flag=paperService.deletePaperById(paper.getId());
         if(flag){
             return "false";
         }

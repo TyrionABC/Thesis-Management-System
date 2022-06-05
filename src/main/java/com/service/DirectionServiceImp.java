@@ -18,36 +18,43 @@ public class DirectionServiceImp implements DirectionService{
     @Autowired
     private DirectionMapper directionMapper;
     @Override
-    public void insertDirection(Direction direction) {
-        if(direction==null) {
-            System.out.println("尚未为该方向添加内容");
-            //direction为空应如何判断？
+    public boolean insertDirection(Direction direction) {
+        //该方向已经存在
+        if(directionMapper.selectDirectionByName(direction.getDirectionName())!=null){
+            return false;
         }
-        else {
-            if(directionMapper.selectDirectionByName(direction.getDirectionName())!=null){
-                System.out.println("该方向已经存在，无需添加");
-            }
-            else{
-                directionMapper.insert(direction);
-            }
+        else{
+            directionMapper.insert(direction);
+            return true;
         }
     }
 
     @Override
     public void deleteDirectionByName(String name) {
+        if (directionMapper.selectDirectionByName(name).getLevel()==1){
+            List<Direction> directions=directionMapper.selectDirectionByParent(name);
+            for(Direction direction:directions){
+                direction.setParentDirectionName(direction.getDirectionName());
+                direction.setLevel(1);
+                direction.setPath(direction.getDirectionName());
+                directionMapper.updateById(direction);
+            }
+        }
         directionMapper.deleteDirectionByName(name);
     }
 
     @Override
-    public void updateDirection(String name,Direction direction) throws NotFoundException {
-        Direction direction1=directionMapper.selectDirectionByName(name);
-        if(direction1==null){
-            throw new NotFoundException("there is no such direction");
+    public void updateDirection(String name,Direction direction){
+        if (direction.getParentDirectionName()==null){
+            direction.setPath(direction.getDirectionName());
+            direction.setParentDirectionName(direction.getDirectionName());
+            direction.setLevel(1);
         }
-        else {
-            direction1.setDirectionName(name);
-            directionMapper.updateById(direction);
+        else{
+            direction.setLevel(2);
+            direction.setPath(direction.getParentDirectionName()+"-"+direction.getDirectionName());
         }
+        directionMapper.updateByName(name,direction);
     }
 
     @Override
@@ -67,6 +74,11 @@ public class DirectionServiceImp implements DirectionService{
         pageMap.put("total_pages",directionIPage.getPages());
         pageMap.put("current_data",directionIPage.getRecords());
         return pageMap;
+    }
+
+    @Override
+    public List<Direction> getDirectionsByParent(String parentDirectionName) {
+        return directionMapper.selectDirectionByParent(parentDirectionName);
     }
 
 }

@@ -19,6 +19,29 @@ public class User {
     private String school;
 
     private String direction;
+    private Integer flag;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId='" + userId + '\'' +
+                ", password='" + password + '\'' +
+                ", permission=" + permission +
+                ", name='" + name + '\'' +
+                ", gender='" + gender + '\'' +
+                ", school='" + school + '\'' +
+                ", direction='" + direction + '\'' +
+                ", flag=" + flag +
+                '}';
+    }
+
+    public Integer getFlag() {
+        return flag;
+    }
+
+    public void setFlag(Integer flag) {
+        this.flag = flag;
+    }
 
     public String getGender() {
         return gender;
@@ -76,16 +99,4 @@ public class User {
         this.name = name;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", permission=" + permission +
-                ", name='" + name + '\'' +
-                ", gender='" + gender + '\'' +
-                ", school='" + school + '\'' +
-                ", direction='" + direction + '\'' +
-                '}';
-    }
 }

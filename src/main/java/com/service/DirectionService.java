@@ -9,10 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 public interface DirectionService {
-    void insertDirection(Direction direction);
+    boolean insertDirection(Direction direction);
     void deleteDirectionByName(String name);
     void updateDirection (String name,Direction direction) throws NotFoundException;
     Direction selectDirectionByName(String name);
     List<Direction> selectAll();
     Map<String,Object> selectPage(int page, int size, QueryWrapper<Direction> queryWrapper);
+    List<Direction> getDirectionsByParent(String parentDirectionName);
 }

@@ -3,6 +3,7 @@ package com.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.domain.Paper_Basic_info;
 import com.domain.Writer;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -14,5 +15,7 @@ public interface WriterMapper extends BaseMapper<Writer> {
     List<Paper_Basic_info> selectPapersByWriter(String writerName);
     @Select("select * from writer where id=#{id}")
     List<Writer> selectWritersById(String id);
+    @Delete("delete from writer where id=#{paperId}")
+    void deleteWriterByPaperId(String paperId);
 
 }

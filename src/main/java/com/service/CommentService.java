@@ -5,7 +5,7 @@ import com.domain.Comment;
 import java.util.List;
 
 public interface CommentService {
-    void insert(Comment comment,String parentId);
+    void insert(Comment comment);
     void delete(String commentId);
     void update(Comment comment);
     List<Comment> selectAll(String id);
