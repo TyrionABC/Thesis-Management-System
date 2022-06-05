@@ -10,7 +10,7 @@ import CryptoJS from "crypto-js";
 const { TabPane } = Tabs;
 
 function BasicSet(props) {
-  const onFinish = (values: any) => {
+  const onFinish = (values) => {
     console.log('Success:', values);
     axios.post('http://localhost:8080/admin/updateUser', values)
         .then(function (response) {
@@ -19,7 +19,7 @@ function BasicSet(props) {
         .catch(err => console.log(err));
   };
 
-  const onFinishFailed = (errorInfo: any) => {
+  const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };
 
@@ -93,7 +93,7 @@ function BasicSet(props) {
 };
 
 function PrivacySet(props) {
-  const onFinish = (values: any) => {
+  const onFinish = (values) => {
     console.log('Success:', values);
     let jsonVal = {
       password: CryptoJS.MD5(values['newPassword']).toString(),
@@ -105,7 +105,7 @@ function PrivacySet(props) {
         .catch(err => console.log(err));
   };
 
-  const onFinishFailed = (errorInfo: any) => {
+  const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };
   const psw = props.info.password;

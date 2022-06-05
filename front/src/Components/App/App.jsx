@@ -143,7 +143,7 @@ function SearchResult(props) {
 let contents = [];
 
 const InnerForm = () => {
-  const onFinish = (values: any) => {
+  const onFinish = (values) => {
     if(!values['title'] && !values['path'] && !values['thesisType']
         && !values['overview'] && !values['writerName'] && !values['publisher']
         && !values['publishMeeting']) alert("搜索条件不能全为空!");
@@ -161,7 +161,7 @@ const InnerForm = () => {
         .catch(err => console.log(err));
   };
 
-  const onFinishFailed = (errorInfo: any) => {
+  const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };
 
