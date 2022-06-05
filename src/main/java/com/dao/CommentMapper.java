@@ -18,4 +18,6 @@ public interface CommentMapper extends BaseMapper<Comment> {
     void deleteByPaperId(String paperId);
     @Select("select * from comment where parent_comment_id=#{id}")
     List<Comment> selectCommentsByParent(String id);
+    @Select("select * from comment where comment_id=#{commentId}")
+    Comment selectComment(String commentId);
 }

@@ -29,7 +29,7 @@ public class Comment {
     public void setReplyComments(List<Comment> replyComments) {
         this.replyComments = replyComments;
     }
-
+    @TableField(exist = false)
     private List<Comment> replyComments = new ArrayList<>();
 
     public String getCommentId() {

@@ -60,10 +60,13 @@ function Navi() {
         .then(function (response) {
           console.log("response: ", response);
           const correct = response['data'];
-          if(correct) {
+          if(correct===1) {
             navigate('/app', { replace: true, state: data });
           }
-          else {
+          if(correct===2){
+            navigate('/admin',{replace:true, state:data});
+          }
+          if(correct===0) {
             alert("密码或用户名错误!");
           }
         })

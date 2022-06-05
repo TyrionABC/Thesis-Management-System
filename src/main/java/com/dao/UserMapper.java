@@ -18,6 +18,8 @@ public interface UserMapper extends BaseMapper<User> {
 
     @Update("update user set permission=1-permission where user_id=#{userId}")
     void updateUserPermission(String userId);
+    @Update("update user set flag=0 where user_id=#{userId}")
+    void updateUserFlag(String userId);
 
     @Select("<script>" +
             "select * from user " +

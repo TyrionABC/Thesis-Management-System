@@ -58,6 +58,7 @@ public class CommentController {
     @ResponseBody
     @PostMapping("/insertComment")
     public String insert(@RequestBody Comment comment){
+        //System.out.println(comment);
         commentService.insert(comment);
         return "true";
     }

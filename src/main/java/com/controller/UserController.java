@@ -38,12 +38,15 @@ public class UserController {
     public String Login(@RequestBody User user1,HttpSession session){
         User user=userService.selectUserByUserIdAndPassword(user1.getUserId(),user1.getPassword());
         System.out.println(user);
-        if (user != null&&user.getFlag()==0){
+        if (user != null&&user.getFlag()==0&& user.getPermission()){
             user.setPassword(null);
             session.setAttribute("user", user);
-            return "true";
-        } else{
-            return "false";
+            return "2";
+        } else if(user != null&&user.getFlag()==0&& !user.getPermission()){
+            return "1";
+        }
+        else{
+            return "0";
         }
     }
     //注册，新增用户
@@ -98,7 +101,7 @@ public class UserController {
         jsonObject.put("school",user.getSchool());
         return jsonObject;
     }
-    //获取所有用户信息
+    //获取所有用户(非管理员)信息
     @CrossOrigin
     @GetMapping("/getAllUsers")
     @ResponseBody
@@ -106,6 +109,8 @@ public class UserController {
         JSONArray array=new JSONArray();
         List<User> users=userService.getAll();
         for(User user:users){
+            if(user.getPermission())
+                continue;
             JSONObject jsonObject=new JSONObject();
             jsonObject.put("userId",user.getUserId());
             jsonObject.put("direction",user.getDirection());
@@ -113,6 +118,7 @@ public class UserController {
             jsonObject.put("name",user.getName());
             jsonObject.put("password",user.getPassword());
             jsonObject.put("school",user.getSchool());
+            jsonObject.put("flag",user.getFlag());
             array.add(jsonObject);
         }
         return array;
@@ -142,6 +148,13 @@ public class UserController {
     @ResponseBody
     public String deleteUser(@RequestBody Id userId){
         userService.deleteUserByUserId(userId.getUserId());
+        return "true";
+    }
+    @CrossOrigin
+    @PostMapping("recoverUser")
+    @ResponseBody
+    public String recoverUser(@RequestBody Id userId){
+        userMapper.updateUserFlag(userId.getUserId());
         return "true";
     }
     //修改用户超级权限,使其权限改变，调用一次则变为与原来相反的权限

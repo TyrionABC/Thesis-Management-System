@@ -192,24 +192,24 @@ class LabbbApplicationTests {
         System.out.println(noteAndFileService.select("2"));
     }
     @Test
-    void insertComment(){
-        Comment comment = new Comment();
-        comment.setId("0");
-        comment.setContent("长风破浪会有时，直挂云帆济沧海");
-        comment.setUserId("1216776075");
-        commentService.insert(comment);
-    }
-    @Test
     void deleteComment(){
         commentService.delete("0932b08f-3");
     }
     @Test
     void selectAll(){
-        System.out.println(commentService.selectAll("0"));
+        List<Comment> comments=commentService.selectAll("0c28414e-2");
+        System.out.println(comments);
+//        for(Comment comment:comments){
+//            System.out.println(comment.getReplyComments());
+//        }
     }
     @Test
     void selectMyPapers(){
         System.out.println(paperMapper.getNewPapers());
+    }
+    @Test
+    void selectReply(){
+        System.out.println(commentService.getReplies("23412250-a"));
     }
     @Test
     void updatePublish(){
@@ -256,4 +256,5 @@ class LabbbApplicationTests {
         //System.out.println(directionMapper.selectDirectionByParent("后端"));
         //System.out.println(userMapper.selectUserByIdAndPassword("1216776075@qq.com","9e85800c0e21ad360ac3a86f3abd6bd8"));
     }
+
 }
