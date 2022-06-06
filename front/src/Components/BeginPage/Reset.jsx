@@ -78,14 +78,13 @@ const Reset = () => {
       username: formValue['name'],
     }
     axios.post('http://localhost:8080/admin/register', value)
-        .then(function(response) {
+        .then(function (response) {
           console.log('response: ', response);
           const success = response['data'];
-          if(success) {
+          if (success) {
             alert("操作成功!");
             window.history.go(-1);
-          }
-          else {
+          } else {
             alert("操作失败, 请重试!");
           }
         })
@@ -145,7 +144,7 @@ const Reset = () => {
             <h3 className="mb-5">{ target }</h3>
             <TextField name="name" label="用户名" />
             <TextField name="email" label="邮箱" />
-            <TextField name="password" label="新密码" type="password" autoComplete="off" />
+            <TextField name="password" label="密码" type="password" autoComplete="off" />
             <TextField
                 name="verifyPassword"
                 label="验证密码"

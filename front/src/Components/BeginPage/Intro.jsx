@@ -53,6 +53,7 @@ function Navi() {
     let psw = CryptoJS.MD5(formValue['password']).toString();
     // 验证
     let value = {
+        name: formValue['name'],
         userId: formValue['email'],
         password: psw,
       };
@@ -107,7 +108,6 @@ function Navi() {
                       <Button appearance="primary" type="submit" onClick={ ()=>loginHandle() }>开始</Button>
                       <Button appearance="ghost" onClick={ ()=>password_handle("register") }>注册</Button>
                     </ButtonGroup>
-                    <Button appearance="subtle" onClick={ ()=>password_handle("reset") }>忘记密码?</Button>
                   </ButtonToolbar>
                 </Form.Group>
               </Form>

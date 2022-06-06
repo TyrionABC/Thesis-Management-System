@@ -37,6 +37,9 @@ public class UserController {
     @ResponseBody
     public String Login(@RequestBody User user1,HttpSession session){
         User user=userService.selectUserByUserIdAndPassword(user1.getUserId(),user1.getPassword());
+        if(user.getName() != user1.getName()) {
+            return "0";
+        }
         System.out.println(user);
         if (user != null&&user.getFlag()==0&& user.getPermission()){
             user.setPassword(null);
@@ -67,10 +70,12 @@ public class UserController {
             user.setUserId(user1.getUserId());
             user.setPassword(user1.getPassword());
             user.setPermission(false);
+            user.setFlag(0);
             userService.insertUser(user);
             return "true";
         }
     }
+
     //登出
     @CrossOrigin
     @GetMapping("/logout")

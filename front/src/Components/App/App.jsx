@@ -28,7 +28,6 @@ import { GetContentData, GetUniversalData } from "../Data/DataChart";
 import { Latest } from "../Thesis/Thesis";
 import MyThesis from "../Thesis/MyThesis";
 import MyColumn from "../Thesis/MyColumn";
-import WriteThesis from "../Thesis/WriteThesis";
 import { BasicInfoSet } from "./Info";
 import './App.css';
 import { Link } from 'react-router-dom';
