@@ -161,7 +161,7 @@ class Counting extends React.Component {
   }
 }
 
-const Category: React.FC = (props) => {
+const Category = (props) => {
   let dt = props.data;
   let thesisCount = [];
   let likeCount = [];
