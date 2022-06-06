@@ -33,4 +33,12 @@ public class Belong {
                 ", id='" + id + '\'' +
                 '}';
     }
+
+    public Belong() {
+    }
+
+    public Belong(String directionName, String id) {
+        this.directionName = directionName;
+        this.id = id;
+    }
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin")
@@ -68,6 +69,28 @@ public class BelongController {
             redirectAttributes.addFlashAttribute("message","修改成功");
         }
         return "redirect:/admin/belong";
+    }
+    @CrossOrigin
+    @PostMapping("/updatePaperBelong")
+    @ResponseBody
+    public String updatePaper(@RequestBody Map<String,String> directions){
+        String paperId=directions.get("Id");
+        for (Map.Entry<String, String> entry : directions.entrySet()) {
+            String mapKey = entry.getKey();
+            if ("Id".equals(mapKey))
+                continue;
+            String mapValue = entry.getValue();
+            //mapKey为奇数表示删除,mapKey为偶数表示添加
+            if (Integer.parseInt(mapKey)%2==0){
+                System.out.println("添加"+mapValue);
+                belongService.insertBelong(new Belong(mapValue,paperId));
+            }
+            else {
+                System.out.println("删除"+mapValue);
+                //belongService.deleteBelongs(new Belong(mapValue,paperId));
+            }
+        }
+        return "true";
     }
 
 

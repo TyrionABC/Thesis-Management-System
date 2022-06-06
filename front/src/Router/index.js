@@ -6,7 +6,7 @@ import Intro from "../Components/BeginPage/Intro";
 import Reset from "../Components/BeginPage/Reset";
 import App from "../Components/App/App";
 import Admin from "../Components/Admin/Admin";
-import WriteThesis from "../Components/Thesis/WriteThesis";
+import {WriteThesis} from "../Components/Thesis/WriteThesis";
 
 export default class Routing extends React.Component {
     render() {

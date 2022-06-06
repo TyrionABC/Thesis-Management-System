@@ -235,7 +235,7 @@ export class GetUniversalData extends React.Component {
       let month = date.getMonth();
       month++;
       let val = (month - i + 12) % 12;
-      list[len - i - 1] = "" + val + "月";
+      list[i] = "" + val + "月";
     }
     return list;
   }

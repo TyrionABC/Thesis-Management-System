@@ -83,7 +83,7 @@ public interface PaperMapper extends BaseMapper<Paper_Basic_info> {
     @Select("select * from paper_basic_info where title=#{title}")
     Paper_Basic_info selectPaperByTitle(String title);
 
-    @Select("select count(*) as num,direction.parent_direction_name as direction,sum(paper_basic_info.`like`) as likes " +
+    @Select("select count(*) as num,direction.parent_direction_name as direction,sum(paper_basic_info.`likes`) as likes " +
             "from direction inner join belong on direction.direction_name=belong.direction_name INNER JOIN paper_basic_info on paper_basic_info.id=belong.id " +
             "WHERE paper_basic_info.publisher_id=#{userId} GROUP BY direction.parent_direction_name")
     List<MyPaper> selectMyPaper(String userId);

@@ -81,4 +81,16 @@ public class DirectionServiceImp implements DirectionService{
         return directionMapper.selectDirectionByParent(parentDirectionName);
     }
 
+    @Override
+    public List<Direction> getPaperDirection(String id) {
+        List<Direction> directions=directionMapper.selectPaperDirections(id);
+        return directions;
+    }
+
+    @Override
+    public List<Direction> getAllParents() {
+        return directionMapper.selectAllParents();
+    }
+
+
 }

@@ -23,4 +23,10 @@ public interface DirectionMapper extends BaseMapper<Direction> {
             "where direction_name=#{name}")
     void updateByName(String name,@Param("direction") Direction direction);
 
+    @Select("select * from belong inner join direction on belong.direction_name=direction.direction_name where belong.id=#{id}")
+    List<Direction> selectPaperDirections(String id);
+
+    @Select("select * from direction where direction_name=parent_direction_name")
+    List<Direction> selectAllParents();
+
 }

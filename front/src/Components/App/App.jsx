@@ -99,7 +99,8 @@ function SearchResult(props) {
     }
   ];
   console.log(data);
-  let arr = Array.from(data);
+  let arr = data;
+
   return <>
     <PageHeader style={{background: '#fff'}} title="搜索结果" breadcrumb={{ routes }}>
       <Descriptions>
@@ -156,7 +157,7 @@ const InnerForm = () => {
           let pass;
           if(response.data.length === 0)
             pass = [];
-          else pass = [response.data[0]];
+          else pass = response.data;
           contents[7] = <SearchResult lists={pass}/>;
         })
         .catch(err => console.log(err));

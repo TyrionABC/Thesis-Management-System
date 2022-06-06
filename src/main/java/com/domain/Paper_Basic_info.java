@@ -20,8 +20,21 @@ public class Paper_Basic_info {
     private String literatureLink;
     @TableField("publisher_id")
     private String publisherId;
+
+    public Paper_Basic_info() {
+    }
+
+    public Paper_Basic_info(String title, String thesisType, String literatureLink, String publisherId, Integer flag, String text) {
+        this.title = title;
+        this.thesisType = thesisType;
+        this.literatureLink = literatureLink;
+        this.publisherId = publisherId;
+        this.flag = flag;
+        this.text = text;
+    }
+
     @TableField("likes")
-    private Integer like;
+    private Integer likes;
     @TableField("flag")
     private Integer flag;
     @TableField("text")
@@ -38,7 +51,7 @@ public class Paper_Basic_info {
                 ", publisherId='" + publisherId + '\'' +
                 ", text='" + text + '\'' +
                 ", flag=" + flag +
-                ", like=" + like +
+                ", like=" + likes +
                 '}';
     }
 
@@ -63,11 +76,11 @@ public class Paper_Basic_info {
     }
 
     public int getLike() {
-        return like;
+        return likes;
     }
 
-    public void setLike(int like) {
-        this.like = like;
+    public void setLike(Integer likes) {
+        this.likes = likes;
     }
 
     public String getId() {

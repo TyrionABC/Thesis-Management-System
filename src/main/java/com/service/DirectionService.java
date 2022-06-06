@@ -16,4 +16,6 @@ public interface DirectionService {
     List<Direction> selectAll();
     Map<String,Object> selectPage(int page, int size, QueryWrapper<Direction> queryWrapper);
     List<Direction> getDirectionsByParent(String parentDirectionName);
+    List<Direction> getPaperDirection(String id);
+    List<Direction> getAllParents();
 }

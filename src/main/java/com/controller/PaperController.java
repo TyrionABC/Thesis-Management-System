@@ -94,17 +94,7 @@ public class PaperController {
             if(paper.getFlag()==1)
                 continue;
             JSONObject jo = new JSONObject();
-            jo.put("id", paper.getId());
-            jo.put("literatureLink", paper.getLiteratureLink());
-            jo.put("publisherId",paper.getPublisherId());
-            jo.put("thesisDate",paper.getThesisDate());
-            jo.put("thesisType",paper.getThesisType());
-            jo.put("title",paper.getTitle());
-            jo.put("like",paper.getLike());
-            jo.put("writer",paper.getWriterName());
-            jo.put("publisher",paper.getPublisher());
-            jo.put("path",paper.getPath());
-            jo.put("publishMeeting",paper.getPublishMeeting());
+            putIn(paper, jo);
             json.add(jo);
         }
         System.out.println(json.size());
@@ -123,17 +113,7 @@ public class PaperController {
             if(paper.getFlag()==1)
                 continue;
             JSONObject jo = new JSONObject();
-            jo.put("id", paper.getId());
-            jo.put("literatureLink", paper.getLiteratureLink());
-            jo.put("publisherId",paper.getPublisherId());
-            jo.put("thesisDate",paper.getThesisDate());
-            jo.put("thesisType",paper.getThesisType());
-            jo.put("title",paper.getTitle());
-            jo.put("like",paper.getLike());
-            jo.put("writer",paper.getWriterName());
-            jo.put("publisher",paper.getPublisher());
-            jo.put("path",paper.getPath());
-            jo.put("publishMeeting",paper.getPublishMeeting());
+            putIn(paper, jo);
             json.add(jo);
         }
         System.out.println(json);
@@ -152,23 +132,28 @@ public class PaperController {
             if (paper.getFlag()==0)
                 continue;
             JSONObject jo = new JSONObject();
-            jo.put("id", paper.getId());
-            jo.put("literatureLink", paper.getLiteratureLink());
-            jo.put("publisherId",paper.getPublisherId());
-            jo.put("thesisDate",paper.getThesisDate());
-            jo.put("thesisType",paper.getThesisType());
-            jo.put("title",paper.getTitle());
-            jo.put("like",paper.getLike());
-            jo.put("writer",paper.getWriterName());
-            jo.put("publisher",paper.getPublisher());
-            jo.put("path",paper.getPath());
-            jo.put("publishMeeting",paper.getPublishMeeting());
+            putIn(paper, jo);
             jo.put("flag",paper.getFlag());
             json.add(jo);
         }
         System.out.println(json);
         return json;
     }
+
+    private void putIn(Paper paper, JSONObject jo) {
+        jo.put("id", paper.getId());
+        jo.put("literatureLink", paper.getLiteratureLink());
+        jo.put("publisherId",paper.getPublisherId());
+        jo.put("thesisDate",paper.getThesisDate());
+        jo.put("thesisType",paper.getThesisType());
+        jo.put("title",paper.getTitle());
+        jo.put("like",paper.getLike());
+        jo.put("writer",paper.getWriterName());
+        jo.put("publisher",paper.getPublisher());
+        jo.put("path",paper.getPath());
+        jo.put("publishMeeting",paper.getPublishMeeting());
+    }
+
     //查找论文，⽀持按照研究⽅向、论⽂标题、论⽂类型、论⽂摘要模糊查询、作者、发布⼈、会议等条件筛选或查询，以及组合查询
     //列表查询结果⽀持分页、排序
     @CrossOrigin
@@ -215,22 +200,16 @@ public class PaperController {
     @PostMapping("/update")
     @ResponseBody
     public String update(@RequestBody Paper_Basic_info paper){
-        if(paperService.selectPaperById(paper.getId())==null){
-            return "false";
-        }
-        else {
-            paperService.updatePaper(paper);
-            return "true";
-        }
+        return ""+paperService.updatePaper(paper);
     }
 
     //插入论文
     @CrossOrigin
     @PostMapping("/input")
     @ResponseBody
-    public String input(@RequestBody Paper_Basic_info paper){
+    public String input(@RequestBody Paper paper){
         System.out.println(paper);
-        paperService.insertPaper(paper);
+        paperService.insertPaper(new Paper_Basic_info(paper.getTitle(),paper.getThesisType(),paper.getLiteratureLink(),paper.getPublisherId(),paper.getFlag(),paper.getText()));
         return "true";
     }
     //点赞
@@ -296,7 +275,21 @@ public class PaperController {
     @ResponseBody
     public JSONObject getText(@PathVariable String paperId){
         JSONObject jsonObject=new JSONObject();
-        jsonObject.put("text",paperService.selectPaperById(paperId).getText());
+        Paper_Basic_info paper=paperService.selectPaperById(paperId);
+        System.out.println(paper);
+        List<Direction> directions=directionService.getPaperDirection(paperId);
+        int i=0;
+        for (Direction direction:directions){
+            jsonObject.put("direction"+i++,direction.getPath());
+        }
+        jsonObject.put("id",paper.getId());
+        jsonObject.put("title",paper.getTitle());
+        jsonObject.put("thesisType",paper.getThesisType());
+        jsonObject.put("thesisDate",paper.getThesisDate().toString());
+        jsonObject.put("literatureLink",paper.getLiteratureLink());
+        jsonObject.put("publisherId",paper.getPublisherId());
+        jsonObject.put("likes",paper.getLike());
+        jsonObject.put("text",paper.getText());
         return jsonObject;
     }
 

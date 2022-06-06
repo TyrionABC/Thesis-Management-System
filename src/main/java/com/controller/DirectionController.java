@@ -30,17 +30,33 @@ public class DirectionController {
     @GetMapping("/getAllDirections")
     @ResponseBody
     public JSONArray getAll() {
-        List<Direction> directions=directionService.selectAll();
+        List<Direction> parents=directionService.getAllParents();
         JSONArray jsonArray=new JSONArray();
-        for(Direction direction:directions){
+        for(Direction parent:parents){
             JSONObject jsonObject=new JSONObject();
-            jsonObject.put("directionName",direction.getDirectionName());
-            jsonObject.put("parentDirectionName",direction.getParentDirectionName());
-            jsonObject.put("level",direction.getLevel());
-            jsonObject.put("path",direction.getPath());
+            jsonObject.put("label",parent.getDirectionName());
+            jsonObject.put("value",parent.getDirectionName());
+            JSONArray children=new JSONArray();
+            for (Direction direction:directionService.getDirectionsByParent(parent.getDirectionName())){
+                JSONObject jsonObject1=new JSONObject();
+                jsonObject1.put("label",direction.getDirectionName());
+                jsonObject1.put("value",direction.getDirectionName());
+                children.add(jsonObject1);
+            }
+            jsonObject.put("children",children);
             jsonArray.add(jsonObject);
         }
         return jsonArray;
+    }
+    @GetMapping("test")
+    @ResponseBody
+    public JSONObject test(){
+        JSONObject jsonObject=new JSONObject();
+        String[] children=new String[200];
+        children[0]="11";
+        children[1]="22";
+        jsonObject.put("array",children);
+        return jsonObject;
     }
     //查找某方向,需要传入方向名称
     @CrossOrigin
