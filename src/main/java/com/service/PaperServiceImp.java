@@ -28,18 +28,17 @@ public class PaperServiceImp implements PaperService{
     @Autowired
     private ReferenceMapper referenceMapper;
     @Override
-    public boolean insertPaper(Paper_Basic_info paper) {
-        if (paperMapper.selectPaperByTitle(paper.getTitle())!=null)
-            return false;//出现重名论文
-        else{
-            String id = UUID.randomUUID().toString().substring(0,10);
-            while (paperMapper.selectPaperById(id)!=null){
-                id=UUID.randomUUID().toString().substring(0,10);
-            }
-            paper.setId(id);
-            paperMapper.insert(paper);
-            return true;
+    public void insertPaper(Paper_Basic_info paper) {
+        String id = UUID.randomUUID().toString().substring(0,10);
+        while (paperMapper.selectPaperById(id)!=null){
+            id=UUID.randomUUID().toString().substring(0,10);
         }
+        paper.setThesisDate(new Date());
+        paper.setId(id);
+        paper.setLike(0);
+        paper.setFlag(0);
+        System.out.println(paper);
+        paperMapper.insert(paper);
     }
 
     @Override
@@ -59,12 +58,12 @@ public class PaperServiceImp implements PaperService{
     }
 
     @Override
-    public boolean updatePaper(Paper_Basic_info paper, String id) {
-        if (paperMapper.selectPaperById(id)==null){
+    public boolean updatePaper(Paper_Basic_info paper) {
+        if (paperMapper.selectPaperById(paper.getId())==null){
             return false;
         }
         else{
-            paper.setId(id);
+            paper.setId(paper.getId());
             paperMapper.updateById(paper);
             return true;
         }
@@ -153,6 +152,12 @@ public class PaperServiceImp implements PaperService{
     @Override
     public List<Integer> getPaperOfDay(String userId) {
         return paperMapper.getPapersOfDay(userId);
+    }
+
+    @Override
+    public Integer likePaper(String paperId) {
+        paperMapper.likePaper(paperId);
+        return paperMapper.selectLike(paperId);
     }
 
 }

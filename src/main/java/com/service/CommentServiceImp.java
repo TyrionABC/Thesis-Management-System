@@ -24,8 +24,9 @@ public class CommentServiceImp implements CommentService{
         while (commentMapper.selectOne(queryWrapper)!=null){
             id=UUID.randomUUID().toString().substring(0,10);
         }
-        comment.setDate(new Date());
+        //comment.setDate(new Date());
         comment.setCommentId(id);
+        System.out.println(comment);
         commentMapper.insert(comment);
     }
 

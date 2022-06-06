@@ -19,6 +19,15 @@ public class Paper {
     String overview;
     String writerName;
     String publishMeeting;
+    String text;
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
 
     public int getFlag() {
         return flag;
@@ -142,8 +151,9 @@ public class Paper {
                 ", overview='" + overview + '\'' +
                 ", writerName='" + writerName + '\'' +
                 ", publishMeeting='" + publishMeeting + '\'' +
+                ", text='" + text + '\'' +
                 ", publisher='" + publisher + '\'' +
-                ", flag='" + flag + '\'' +
+                ", flag=" + flag +
                 ", like=" + like +
                 '}';
     }

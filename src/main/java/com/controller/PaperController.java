@@ -3,15 +3,12 @@ package com.controller;
 import com.dao.PaperMapper;
 import com.domain.*;
 import com.service.*;
-import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 
 // data: ['前端', '后端', 'Android', 'IOS', '软件测试', '人工智能', '机器学习', '深度学习', '数据库', '网络安全']
@@ -213,32 +210,35 @@ public class PaperController {
             return "true";
         }
     }
-    //修改论文信息##
+    //修改论文
     @CrossOrigin
     @PostMapping("/update")
     @ResponseBody
-    public String update(@RequestBody Paper_Basic_info paper,@RequestParam String id){
-        if(paperService.selectPaperById(id)==null){
+    public String update(@RequestBody Paper_Basic_info paper){
+        if(paperService.selectPaperById(paper.getId())==null){
             return "false";
         }
         else {
-            paperService.updatePaper(paper,id);
+            paperService.updatePaper(paper);
             return "true";
         }
     }
 
-    //插入论文##
+    //插入论文
     @CrossOrigin
     @PostMapping("/input")
     @ResponseBody
     public String input(@RequestBody Paper_Basic_info paper){
-        boolean flag=paperService.insertPaper(paper);
-        if(!flag){
-            return "false";
-        }
-        else {
-            return "true";
-        }
+        System.out.println(paper);
+        paperService.insertPaper(paper);
+        return "true";
+    }
+    //点赞
+    @CrossOrigin
+    @GetMapping("/like/{paperId}")
+    @ResponseBody
+    public String like(@PathVariable String paperId){
+        return paperService.likePaper(paperId).toString();
     }
     // data: ['前端', '后端', 'Android', 'IOS', '软件测试', '人工智能', '机器学习', '深度学习', '数据库', '网络安全']
     //获取每个方向的我的论文的数目和点赞数
@@ -289,6 +289,15 @@ public class PaperController {
                 break;
         }
         return jsonArray;
+    }
+    //获取文章内容
+    @CrossOrigin
+    @GetMapping("getText/{paperId}")
+    @ResponseBody
+    public JSONObject getText(@PathVariable String paperId){
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.put("text",paperService.selectPaperById(paperId).getText());
+        return jsonObject;
     }
 
 }

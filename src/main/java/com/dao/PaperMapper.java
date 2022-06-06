@@ -43,6 +43,11 @@ public interface PaperMapper extends BaseMapper<Paper_Basic_info> {
             "</where>" +
             "</script>"})
     List<Paper> getPapersByConditions(@Param("query") Query query);
+//    @Insert("<script>" +
+//            "insert into paper_basic_info ( id, title, thesis_type,  literature_link, publisher_id, text, flag, like )" +
+//            "values (#{paper.id},#{paper.title},#{paper.thesisType},#{paper.literatur})" +
+//            "</script>")
+//    void insertPaper(@Param("paper") Paper paper);
     @Select({"<script>" +
             "select * from paper_basic_info left join belong on paper_basic_info.id=belong.id " +
             "left join direction on belong.direction_name=direction.direction_name " +
@@ -89,6 +94,11 @@ public interface PaperMapper extends BaseMapper<Paper_Basic_info> {
     @Select("select count(*) FROM paper_basic_info WHERE flag=0 and paper_basic_info.publisher_id=#{userId} GROUP BY DATE_FORMAT(thesis_date,'%Y-%m-%d') ORDER BY DATE_FORMAT(thesis_date,'%Y-%m-%d') DESC")
     List<Integer> getPapersOfDay(String userId);
 
+    @Update("update paper_basic_info set likes=likes+1 where id=#{paperId}")
+    void likePaper(String paperId);
+
+    @Select("select likes from paper_basic_info where id=#{paperId}")
+    Integer selectLike(String paperId);
 
 
 

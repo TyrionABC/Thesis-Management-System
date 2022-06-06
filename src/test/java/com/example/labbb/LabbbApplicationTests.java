@@ -122,10 +122,13 @@ class LabbbApplicationTests {
     @Test
     void insertPaper(){
         Paper_Basic_info paper=new Paper_Basic_info();
-        paper.setLiteratureLink("https://www.cnblogs.com/minmin123/p/14590360.html");
-        paper.setPublisherId("1216776075");
-        paper.setTitle("前后端之间的数据传递");
-        paper.setThesisType("tool");
+        paper.setLiteratureLink("https://www.cnblogs.com");
+        paper.setPublisherId("1216776075@qq.com");
+        paper.setTitle("前后端概述");
+        paper.setThesisType("综述型");
+        paper.setText("前后端");
+        paper.setFlag(0);
+        paper.setLike(0);
         paperService.insertPaper(paper);
     }
     @Test
@@ -196,12 +199,13 @@ class LabbbApplicationTests {
         commentService.delete("0932b08f-3");
     }
     @Test
-    void selectAll(){
-        List<Comment> comments=commentService.selectAll("0c28414e-2");
-        System.out.println(comments);
-//        for(Comment comment:comments){
-//            System.out.println(comment.getReplyComments());
-//        }
+    void insertComment(){
+        Comment comment=new Comment();
+        comment.setContent("原来如此");
+        comment.setUserId("1216776075");
+        comment.setId("0c28414e-2");
+        comment.setDate(new Date());
+        commentService.insert(comment);
     }
     @Test
     void selectMyPapers(){

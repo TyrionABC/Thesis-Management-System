@@ -20,8 +20,47 @@ public class Paper_Basic_info {
     private String literatureLink;
     @TableField("publisher_id")
     private String publisherId;
+    @TableField("likes")
+    private Integer like;
+    @TableField("flag")
+    private Integer flag;
+    @TableField("text")
+    private String text;
 
-    private int like;
+    @Override
+    public String toString() {
+        return "Paper_Basic_info{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", thesisType='" + thesisType + '\'' +
+                ", thesisDate=" + thesisDate +
+                ", literatureLink='" + literatureLink + '\'' +
+                ", publisherId='" + publisherId + '\'' +
+                ", text='" + text + '\'' +
+                ", flag=" + flag +
+                ", like=" + like +
+                '}';
+    }
+
+    public int getFlag() {
+        return flag;
+    }
+
+    public void setFlag(int flag) {
+        this.flag = flag;
+    }
+
+    public void setThesisDate(Date thesisDate) {
+        this.thesisDate = thesisDate;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
 
     public int getLike() {
         return like;
@@ -55,14 +94,6 @@ public class Paper_Basic_info {
         this.thesisType = thesisType;
     }
 
-    public Date getThesisDate() {
-        return thesisDate;
-    }
-
-    public void setThesisDate(Date thesisDate) {
-        this.thesisDate = thesisDate;
-    }
-
     public String getLiteratureLink() {
         return literatureLink;
     }
@@ -75,20 +106,12 @@ public class Paper_Basic_info {
         return publisherId;
     }
 
+    public Date getThesisDate() {
+        return thesisDate;
+    }
+
     public void setPublisherId(String publisherId) {
         this.publisherId = publisherId;
     }
 
-    @Override
-    public String toString() {
-        return "Paper_Basic_info{" +
-                "id='" + id + '\'' +
-                ", title='" + title + '\'' +
-                ", thesisType='" + thesisType + '\'' +
-                ", thesisDate=" + thesisDate +
-                ", literatureLink='" + literatureLink + '\'' +
-                ", publisherId='" + publisherId + '\'' +
-                ", like=" + like +
-                '}';
-    }
 }

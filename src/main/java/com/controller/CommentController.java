@@ -9,7 +9,6 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @Controller
@@ -19,24 +18,41 @@ public class CommentController {
     private CommentService commentService;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private CommentMapper commentMapper;
     //获取该文章所有评论
     @CrossOrigin
     @ResponseBody
-    @PostMapping("/selectAllComments")
-    public JSONArray getAll(@RequestBody Comment comment){
+    @GetMapping("/selectAllComments/{paperId}")
+    public JSONArray getAll(@PathVariable String paperId){
         JSONArray jsonArray=new JSONArray();
-        List<Comment> comments=commentService.selectAll(comment.getId());
+        List<Comment> comments=commentService.selectAll(paperId);
         for(Comment comment1:comments){
-            JSONObject jsonObject=new JSONObject();
-            jsonObject.put("commentId",comment1.getCommentId());
-            jsonObject.put("content",comment1.getContent());
-            jsonObject.put("date",comment1.getId());
-            jsonObject.put("parentCommentId",comment1.getParentCommentId());
-            jsonObject.put("userName",userMapper.selectUserById(comment1.getUserId()).getName());
-            jsonArray.add(jsonObject);
+            if (comment1.getParentCommentId()!=null){
+                continue;
+            }
+            putInComment(jsonArray, comment1);
+            if (comment1.getParentCommentId()==null){
+                for (Comment comment:comment1.getReplyComments()){
+                    putInComment(jsonArray, comment);
+                }
+            }
         }
         return jsonArray;
     }
+
+    private void putInComment(JSONArray jsonArray, Comment comment1) {
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.put("commentId",comment1.getCommentId());
+        jsonObject.put("content",comment1.getContent());
+        jsonObject.put("date",comment1.getDate());
+        jsonObject.put("parentCommentId",comment1.getParentCommentId());
+        jsonObject.put("userName",userMapper.selectUserById(comment1.getUserId()).getName());
+        if(comment1.getParentCommentId()!=null)
+        jsonObject.put("parentUserName",userMapper.selectUserById(commentMapper.selectComment(comment1.getParentCommentId()).getUserId()).getName());
+        jsonArray.add(jsonObject);
+    }
+
     //删除评论
     @CrossOrigin
     @ResponseBody
