@@ -6,6 +6,8 @@ import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/index.css'
 import axios from "axios";
 import { AntDesignOutlined, MinusCircleFilled, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { useLocation } from "react-router";
+
 
 const {Option}=Select;
 const { Column, ColumnGroup } = Table;
@@ -20,8 +22,11 @@ export class WriteThesis extends React.Component {
         direction:[],
         arr:[],
         ref:[],
-        showRef:[]
+        showRef:[],
+        publisher: this.props.name,
+        publisherId: this.props.id,
     }
+
     componentDidMount () {
         // 假设此处从服务端获取html格式的编辑器内容
         let that=this;
@@ -39,8 +44,8 @@ export class WriteThesis extends React.Component {
         // 使用BraftEditor.createEditorState将html字符串转换为编辑器需要的editorStat
         that.setState({
             flag:0,
-            editorState: BraftEditor.createEditorState(htmlContent)
-        })
+            editorState: BraftEditor.createEditorState(htmlContent),
+        });
     }
     handleTitleChange=(value)=>{
         this.setState({
@@ -61,8 +66,8 @@ export class WriteThesis extends React.Component {
                 publishTime:value.publishTime,
                 referIds:this.state.ref,
                 flag:this.state.flag,
-                publisherId:this.props.publisherId,
-                publisher:this.props.publisher
+                publisherId:this.state.publisherId,
+                publisher:this.state.publisher
                 }
         }).then(function(res) {
             console.log(res.data);
