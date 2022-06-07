@@ -64,7 +64,7 @@ public class UserController {
         else {
             System.out.println(session.getAttribute("user"));
             User user=new User();
-            System.out.println(user);
+            System.out.println(user1);
             user.setName(user1.getName());
             user.setUserId(user1.getUserId());
             user.setPassword(user1.getPassword());

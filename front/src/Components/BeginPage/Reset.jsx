@@ -75,7 +75,7 @@ const Reset = () => {
     let value = {
       userId: formValue['email'],
       password: psw,
-      username: formValue['name'],
+      name: formValue['name'],
     }
     axios.post('http://localhost:8080/admin/register', value)
         .then(function (response) {
@@ -123,7 +123,6 @@ const Reset = () => {
     emailjs.send("service_t6mvxxp", "template_kr1di1f", params)
         .then(function (response) {
           console.log('success');
-          alert('发送成功');
         }, function (error) {
           console.log('failed');
           alert('发送失败');
