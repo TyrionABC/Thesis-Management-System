@@ -95,8 +95,6 @@ public class PaperController {
         JSONArray json = new JSONArray();
         // 需要添加作者、发布人姓名、研究方向、发布会议
         for(Paper paper : allPapers){
-            if(paper.getFlag()==1)
-                continue;
             JSONObject jo = new JSONObject();
             putIn(paper, jo);
             json.add(jo);
@@ -164,7 +162,9 @@ public class PaperController {
     @PostMapping("/select")
     @ResponseBody
     public JSONArray select(@RequestBody Query query){
+        System.out.println(query.getTitle());
         List<Paper> papers=paperService.selectPapersByConditions(query);
+        System.out.println(papers);
         JSONArray json = new JSONArray();
         for(Paper paper : papers){
             if(paper.getFlag()==1)

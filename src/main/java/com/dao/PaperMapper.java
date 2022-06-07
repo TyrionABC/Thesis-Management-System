@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 //⽀持按照研究⽅向、论⽂标题、论⽂类型、论⽂摘要模糊查询、作者、发布⼈、
 //会议等条件筛选或查询，以及组合查询。具体实现度⾃⾏决定。
@@ -99,6 +100,20 @@ public interface PaperMapper extends BaseMapper<Paper_Basic_info> {
 
     @Select("select likes from paper_basic_info where id=#{paperId}")
     Integer selectLike(String paperId);
+
+    @Select("SELECT DATE_FORMAT(CURDATE(), '%Y-%m') AS `month`,count(*) as num from paper_basic_info where DATE_FORMAT(thesis_date,'%Y-%m')=DATE_FORMAT((CURDATE() - INTERVAL 0 MONTH), '%Y-%m') and flag=0\n" +
+            "UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 1 MONTH), '%Y-%m') AS `month`,count(*) as num from paper_basic_info where DATE_FORMAT(thesis_date,'%Y-%m')=DATE_FORMAT((CURDATE() - INTERVAL 1 MONTH), '%Y-%m') and flag=0\n" +
+            "UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 2 MONTH), '%Y-%m') AS `month`,count(*) as num from paper_basic_info where DATE_FORMAT(thesis_date,'%Y-%m')=DATE_FORMAT((CURDATE() - INTERVAL 2 MONTH), '%Y-%m') and flag=0\n" +
+            "UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 3 MONTH), '%Y-%m') AS `month`,count(*) as num from paper_basic_info where DATE_FORMAT(thesis_date,'%Y-%m')=DATE_FORMAT((CURDATE() - INTERVAL 3 MONTH), '%Y-%m') and flag=0\n" +
+            "UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 4 MONTH), '%Y-%m') AS `month`,count(*) as num from paper_basic_info where DATE_FORMAT(thesis_date,'%Y-%m')=DATE_FORMAT((CURDATE() - INTERVAL 4 MONTH), '%Y-%m') and flag=0\n" +
+            "UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 5 MONTH), '%Y-%m') AS `month`,count(*) as num from paper_basic_info where DATE_FORMAT(thesis_date,'%Y-%m')=DATE_FORMAT((CURDATE() - INTERVAL 5 MONTH), '%Y-%m') and flag=0\n" +
+            "UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 6 MONTH), '%Y-%m') AS `month`,count(*) as num from paper_basic_info where DATE_FORMAT(thesis_date,'%Y-%m')=DATE_FORMAT((CURDATE() - INTERVAL 6 MONTH), '%Y-%m') and flag=0\n" +
+            "UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 7 MONTH), '%Y-%m') AS `month`,count(*) as num from paper_basic_info where DATE_FORMAT(thesis_date,'%Y-%m')=DATE_FORMAT((CURDATE() - INTERVAL 7 MONTH), '%Y-%m') and flag=0\n" +
+            "UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 8 MONTH), '%Y-%m') AS `month`,count(*) as num from paper_basic_info where DATE_FORMAT(thesis_date,'%Y-%m')=DATE_FORMAT((CURDATE() - INTERVAL 8 MONTH), '%Y-%m') and flag=0\n" +
+            "UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 9 MONTH), '%Y-%m') AS `month`,count(*) as num from paper_basic_info where DATE_FORMAT(thesis_date,'%Y-%m')=DATE_FORMAT((CURDATE() - INTERVAL 9 MONTH), '%Y-%m') and flag=0\n" +
+            "UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 10 MONTH), '%Y-%m') AS `month`,count(*) as num  from paper_basic_info where DATE_FORMAT(thesis_date,'%Y-%m')=DATE_FORMAT((CURDATE() - INTERVAL 10 MONTH), '%Y-%m') and flag=0\n" +
+            "UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 11 MONTH), '%Y-%m') AS `month`,count(*) as num from paper_basic_info where DATE_FORMAT(thesis_date,'%Y-%m')=DATE_FORMAT((CURDATE() - INTERVAL 11 MONTH), '%Y-%m') and flag=0;")
+    List<Month> getNums();
 
 
 

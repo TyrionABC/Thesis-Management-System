@@ -149,7 +149,11 @@ public class PaperServiceImp implements PaperService{
 
     @Override
     public List<Integer> getPaperOfMonth() {
-        return paperMapper.getPapersOfMonth();
+        List<Integer> nums = new ArrayList<>();
+        for (Month month:paperMapper.getNums()){
+            nums.add(month.getNum());
+        }
+        return nums;
     }
 
     @Override

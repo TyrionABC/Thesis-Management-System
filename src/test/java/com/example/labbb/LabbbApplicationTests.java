@@ -251,7 +251,8 @@ class LabbbApplicationTests {
     }
     @Test
     void tt(){
-        System.out.println(directionService.getAllParents());
+        System.out.println(paperService.getPaperOfMonth());
     }
+
 
 }
