@@ -19,6 +19,8 @@ export class WriteThesis extends React.Component {
         isSee:false,
         direction:[],
         arr:[],
+        ref:[],
+        showRef:[]
     }
 
     componentDidMount () {
@@ -67,7 +69,13 @@ export class WriteThesis extends React.Component {
         this.setState({
             isSee:true,
         })
-    } 
+    }
+    addRef = (id, title) => {
+        this.setState({
+            ref:this.state.ref.push(id),
+            showRef:this.state.showRef.push(title)
+        })
+    }
     submitContent = () => {
         this.setState({
             flag:1,
@@ -92,6 +100,7 @@ export class WriteThesis extends React.Component {
     }
 
     render () {
+        let ref=this.state.showRef;
         /*const direction=[{
             label:'人工智能',
             value:'人工智能',
@@ -199,6 +208,17 @@ export class WriteThesis extends React.Component {
                             添加引用
                         </Button>
                     </Form.Item>
+                    <Form.List>
+                    {
+                        ref.map(({item, index})=>(
+                        <Space style={{display:'flex'}} align="baseline">
+                            引用+{index+1}
+                            <Form.Item>
+                                <Input style={{width:200}} value={item} readOnly/>
+                            </Form.Item>
+                        </Space>
+                    ))}
+                    </Form.List>
                     <Modal 
                     title="引用查询"
                     centered
@@ -232,9 +252,9 @@ export class WriteThesis extends React.Component {
                         <Column
                         title="操作"
                         key="action"
-                        render={() => (
+                        render={(_,record) => (
                             <Space size="middle">
-                            <a>添加</ a>
+                            <a style={{color:'green'}} onClick={()=>this.addRef(record.id, record.title)}>添加</ a>
                             </Space>
                         )}
                         />
