@@ -28,7 +28,7 @@ public class PaperServiceImp implements PaperService{
     @Autowired
     private ReferenceMapper referenceMapper;
     @Override
-    public void insertPaper(Paper_Basic_info paper) {
+    public String insertPaper(Paper_Basic_info paper) {
         String id = UUID.randomUUID().toString().substring(0,10);
         while (paperMapper.selectPaperById(id)!=null){
             id=UUID.randomUUID().toString().substring(0,10);
@@ -39,6 +39,7 @@ public class PaperServiceImp implements PaperService{
         //paper.setFlag(0);
         System.out.println(paper);
         paperMapper.insert(paper);
+        return id;
     }
 
     @Override

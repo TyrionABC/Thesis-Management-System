@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface PaperService {
-    void insertPaper(Paper_Basic_info paper);
+    String insertPaper(Paper_Basic_info paper);
     boolean deletePaperById(String id);
     boolean updatePaper(Paper_Basic_info paper);
     Paper_Basic_info selectPaperById(String id);

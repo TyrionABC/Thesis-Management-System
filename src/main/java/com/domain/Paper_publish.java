@@ -66,4 +66,15 @@ public class Paper_publish {
                 ", publisher='" + publisher + '\'' +
                 '}';
     }
+
+    public Paper_publish() {
+    }
+
+    public Paper_publish(String id, String publishMeeting, Date publishTime, String publisherId, String publisher) {
+        this.id = id;
+        this.publishMeeting = publishMeeting;
+        this.publishTime = publishTime;
+        this.publisherId = publisherId;
+        this.publisher = publisher;
+    }
 }

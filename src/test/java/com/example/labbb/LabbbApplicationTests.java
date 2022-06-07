@@ -251,14 +251,7 @@ class LabbbApplicationTests {
     }
     @Test
     void tt(){
-        Direction direction=new Direction();
-        direction.setPath("后端");
-        direction.setDirectionName("555");
-        direction.setParentDirectionName("后端");
-        direction.setLevel(2);
-        directionMapper.updateByName("22",direction);
-        //System.out.println(directionMapper.selectDirectionByParent("后端"));
-        //System.out.println(userMapper.selectUserByIdAndPassword("1216776075@qq.com","9e85800c0e21ad360ac3a86f3abd6bd8"));
+        System.out.println(directionService.getAllParents());
     }
 
 }

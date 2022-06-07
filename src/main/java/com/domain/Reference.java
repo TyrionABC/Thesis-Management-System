@@ -32,4 +32,12 @@ public class Reference {
                 ", referPaperId='" + referPaperId + '\'' +
                 '}';
     }
+
+    public Reference() {
+    }
+
+    public Reference(String id, String referPaperId) {
+        this.id = id;
+        this.referPaperId = referPaperId;
+    }
 }

@@ -40,6 +40,10 @@ public class PaperController {
     private WriterService writerService;
     @Autowired
     private PaperMapper paperMapper;
+    @Autowired
+    private BelongService belongService;
+    @Autowired
+    private ReferenceService referenceService;
     //获取用户笔记
     @CrossOrigin
     @PostMapping("/myNotes/true")
@@ -203,15 +207,6 @@ public class PaperController {
         return ""+paperService.updatePaper(paper);
     }
 
-    //插入论文
-    @CrossOrigin
-    @PostMapping("/input")
-    @ResponseBody
-    public String input(@RequestBody Paper paper){
-        System.out.println(paper);
-        paperService.insertPaper(new Paper_Basic_info(paper.getTitle(),paper.getThesisType(),paper.getLiteratureLink(),paper.getPublisherId(),paper.getFlag(),paper.getText()));
-        return "true";
-    }
     //点赞
     @CrossOrigin
     @GetMapping("/like/{paperId}")
@@ -291,6 +286,35 @@ public class PaperController {
         jsonObject.put("likes",paper.getLike());
         jsonObject.put("text",paper.getText());
         return jsonObject;
+    }
+    //插入论文,传入子方向，基本信息，发布信息，索引，作者信息
+    @CrossOrigin
+    @PostMapping("/insertPaper")
+    @ResponseBody
+    public String putin(@RequestBody AllInfo allInfo){
+        //储存基本信息
+        String id=paperService.insertPaper(new Paper_Basic_info(allInfo.getTitle(),allInfo.getThesisType(),
+                allInfo.getLiteratureLink(),allInfo.getPublisherId(),allInfo.getFlag(),allInfo.getText()));
+        System.out.println(id);
+        System.out.println(allInfo);
+        //存储方向信息
+        for (String direction:allInfo.getDirections()){
+            belongService.insertBelong(new Belong(direction,id));
+        }
+        //存储发布信息
+        publishService.insert(new Paper_publish(id,allInfo.getPublishMeeting(),
+                allInfo.getPublishTime(),allInfo.getPublisherId(),allInfo.getPublisher()));
+        //储存索引信息
+        for (String referId:allInfo.getReferIds()){
+            referenceService.insertReference(new Reference(id,referId));
+        }
+        //存储作者信息
+        int i=1;
+        for (String writer:allInfo.getWriters()){
+            System.out.println(writer);
+            writerService.insert(new Writer(id,writer,i++));
+        }
+        return "hello";
     }
 
 }

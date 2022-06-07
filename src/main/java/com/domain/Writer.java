@@ -54,4 +54,13 @@ public class Writer {
                 ", level=" + level +
                 '}';
     }
+
+    public Writer() {
+    }
+
+    public Writer(String id, String writerName, int level) {
+        this.id = id;
+        this.writerName = writerName;
+        this.level = level;
+    }
 }
