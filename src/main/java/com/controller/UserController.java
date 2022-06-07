@@ -13,6 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/admin")
@@ -37,20 +38,18 @@ public class UserController {
     @ResponseBody
     public String Login(@RequestBody User user1,HttpSession session){
         User user=userService.selectUserByUserIdAndPassword(user1.getUserId(),user1.getPassword());
-        if(user.getName() != user1.getName()) {
+        if(user == null || !Objects.equals(user.getName(), user1.getName())) {
             return "0";
         }
         System.out.println(user);
-        if (user != null&&user.getFlag()==0&& user.getPermission()){
+        if (user.getFlag()==0&& user.getPermission()){
             user.setPassword(null);
             session.setAttribute("user", user);
             return "2";
-        } else if(user != null&&user.getFlag()==0&& !user.getPermission()){
+        } else if(user.getFlag()==0&& !user.getPermission()){
             return "1";
         }
-        else{
-            return "0";
-        }
+        return "0";
     }
     //注册，新增用户
     @CrossOrigin
