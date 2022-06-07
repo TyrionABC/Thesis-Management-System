@@ -17,7 +17,7 @@ export class WriteThesis extends React.Component {
         editorState: BraftEditor.createEditorState(null),
         flag:'',
         isSee:false,
-        direction,
+        direction: [],
         arr:[],
     }
 
@@ -140,7 +140,7 @@ export class WriteThesis extends React.Component {
                     <Form.Item
                     label="研究方向"
                     name="direction">
-                        <Cascader allowClear options={direction} style={{width:300}} multiple />
+                        <Cascader allowClear options={this.state.direction} style={{width:300}} multiple />
                     </Form.Item>
                     <Form.List name="writer">
                     {(fields,{add, remove})=>(

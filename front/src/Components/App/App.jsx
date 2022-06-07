@@ -99,7 +99,6 @@ function SearchResult(props) {
   ];
   console.log(data);
   let arr = data;
-
   return <>
     <PageHeader style={{background: '#fff'}} title="搜索结果" breadcrumb={{ routes }}>
       <Descriptions>
