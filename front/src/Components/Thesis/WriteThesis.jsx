@@ -17,7 +17,7 @@ export class WriteThesis extends React.Component {
         editorState: BraftEditor.createEditorState(null),
         flag:'',
         isSee:false,
-        direction: [],
+        direction:[],
         arr:[],
     }
 
@@ -48,6 +48,19 @@ export class WriteThesis extends React.Component {
     }
     onFinish=(value)=>{
         console.log(this.state.flag);
+    }
+    submitForm =(value)=>{
+        let that=this;
+        axios({
+            method: 'post',
+            url: 'http://localhost:8080/admin/select',
+            data:value
+        }).then(function(res) {
+            console.log(res.data);
+            that.setState({
+                arr: res.data,
+            })
+        });
     }
     addReference = () =>{
         this.setState({
@@ -231,7 +244,7 @@ export class WriteThesis extends React.Component {
                         wrapperCol={{ span: 16 }}
                         initialValues={{ remember: true }}
                         preserve={false}
-                        //onFinish={}
+                        onFinish={this.submitForm}
                         //onFinishFailed={}
                         autoComplete="off"
                         >
