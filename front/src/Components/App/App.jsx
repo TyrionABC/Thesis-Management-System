@@ -70,7 +70,7 @@ function BottomPart() {
   const [bottom, setBottom] = useState(10);
   return <Affix offsetBottom={bottom}>
     <Tooltip title="新文章">
-      <Button type="primary" shape="circle" icon={<PlusOutlined />}
+      <Button type="primary" ghost shape="circle" icon={<PlusOutlined />}
               size="large" href="#" style={{ position: "absolute", bottom: 80, right: 80}}/>
     </Tooltip>
   </Affix>
