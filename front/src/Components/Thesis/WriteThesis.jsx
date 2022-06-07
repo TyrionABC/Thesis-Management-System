@@ -50,6 +50,7 @@ export class WriteThesis extends React.Component {
         console.log(this.state.flag);
     }
     submitForm =(value)=>{
+        console.log(value);
         let that=this;
         axios({
             method: 'post',
@@ -256,37 +257,37 @@ export class WriteThesis extends React.Component {
                             </Form.Item>
                             <Form.Item
                             label="研究方向"
-                            name="direction"
+                            name="path"
                             >
                                 <Input />
                             </Form.Item>
                             <Form.Item
                             label="论文类型"
-                            name="type"
+                            name="thesisType"
                             >
                                 <Input />
                             </Form.Item>
                             <Form.Item
                             label="论文摘要"
-                            name="abstract"
+                            name="overview"
                             >
                                 <Input />
                             </Form.Item>
                             <Form.Item
                             label="作者"
-                            name="writer"
+                            name="writerName"
                             >
                                 <Input />
                             </Form.Item>
                             <Form.Item
                             label="发布人"
-                            name="publish"
+                            name="publisher"
                             >
                                 <Input />
                             </Form.Item>
                             <Form.Item
                             label="会议"
-                            name="meeting"
+                            name="publishMeeting"
                             >
                                 <Input />
                             </Form.Item>

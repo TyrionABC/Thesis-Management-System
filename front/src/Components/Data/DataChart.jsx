@@ -229,19 +229,22 @@ export class GetUniversalData extends React.Component {
 
   setData() {
     let date = new Date();
-    let len = this.state.data.length;
     let list = [];
-    for(let i = 0; i < len; i++) {
-      let month = date.getMonth();
-      month++;
-      let val = (month - i + 12) % 12;
+    let month = date.getMonth();
+    month++;
+    let val = month;
+    for(let i = 4; i >= 0; i--) {
       list[i] = "" + val + "月";
+      val = (val - 1 + 12) % 12;
+      if(val === 0) val++;
     }
     return list;
   }
 
   render() {
-    let data = this.state.data;
+    let tmp = this.state.data;
+    tmp.reverse();
+    let data = tmp;
     let month = this.setData();
     let option = {
       title: {
