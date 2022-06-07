@@ -22,7 +22,6 @@ export class WriteThesis extends React.Component {
         ref:[],
         showRef:[]
     }
-
     componentDidMount () {
         // 假设此处从服务端获取html格式的编辑器内容
         let that=this;
@@ -49,7 +48,27 @@ export class WriteThesis extends React.Component {
         })
     }
     onFinish=(value)=>{
-        console.log(this.state.flag);
+        const htmlContent=this.state.editorState.toHTML();
+        axios({
+            method: 'post',
+            url: 'http://localhost:8080/admin/input',
+            data:{title:this.state.title,
+                text:htmlContent,
+                thesisType:value.thesisType,
+                direction:value.direction,
+                writers:value.writer,
+                publishMeeting:value.publishMeeting,
+                publishTime:value.publishTime,
+                referIds:this.state.ref,
+                flag:this.state.flag,
+                publisherId:this.props.publisherId,
+                publisher:this.props.publisher
+                }
+        }).then(function(res) {
+            console.log(res.data);
+            if(res.data)alert("success");
+            else alert("fail");
+        });
     }
     submitForm =(value)=>{
         console.log(value);
@@ -71,28 +90,30 @@ export class WriteThesis extends React.Component {
         })
     }
     addRef = (id, title) => {
+        let a=[];
+        for(var i=0;i<this.state.ref.length;i++){
+            a.push(this.state.ref[i]);
+        }
+        a.push(id);
+        let b=[];
+        for(var i=0;i<this.state.showRef.length;i++){
+            b.push(this.state.showRef[i]);
+        }
+        b.push(title);
         this.setState({
-            ref:this.state.ref.push(id),
-            showRef:this.state.showRef.push(title)
+            ref:a,
+            showRef:b
         })
     }
     submitContent = () => {
         this.setState({
-            flag:1,
+            flag:0,
         })
     }
     submitFlag = () => {
-        // 在编辑器获得焦点时按下ctrl+s会执行此方法
-        // 编辑器内容提交到服务端之前，可直接调用editorState.toHTML()来获取HTML格式的内容
-        const htmlContent = this.state.editorState.toHTML();
-        //const result = await saveEditorContent(htmlContent)
-        /*axios({
-            method: 'post',
-            url: 'http://localhost:8080/admin/input',
-            data: {text: htmlContent}
-        }).then(function(res) {
-            console.log(res.data);
-        });*/
+        this.setState({
+            flag:1
+        })
     }
 
     handleEditorChange = (editorState) => {
@@ -100,7 +121,6 @@ export class WriteThesis extends React.Component {
     }
 
     render () {
-        let ref=this.state.showRef;
         /*const direction=[{
             label:'人工智能',
             value:'人工智能',
@@ -208,17 +228,16 @@ export class WriteThesis extends React.Component {
                             添加引用
                         </Button>
                     </Form.Item>
-                    <Form.List>
                     {
-                        ref.map(({item, index})=>(
+                        this.state.showRef.map((item, index)=>(
                         <Space style={{display:'flex'}} align="baseline">
-                            引用+{index+1}
-                            <Form.Item>
+                            <Form.Item
+                            label={"引用"+(index+1)}>
                                 <Input style={{width:200}} value={item} readOnly/>
                             </Form.Item>
                         </Space>
-                    ))}
-                    </Form.List>
+                    ))
+                    }
                     <Modal 
                     title="引用查询"
                     centered
@@ -324,7 +343,7 @@ export class WriteThesis extends React.Component {
                         </Button>
                     </Form.Item>
                     <Form.Item>
-                        <Button type="primary" htmlType="submit">
+                        <Button type="primary" htmlType="submit" onClick={this.submitFlag}>
                             保存草稿
                         </Button>
                     </Form.Item>
