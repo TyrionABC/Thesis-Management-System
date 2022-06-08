@@ -13,7 +13,7 @@ import java.util.List;
 public interface WriterMapper extends BaseMapper<Writer> {
     @Select("select * from writer left join paper_basic_info on writer.id = paper_basic_info.id where writer_name=#{writerName}")
     List<Paper_Basic_info> selectPapersByWriter(String writerName);
-    @Select("select * from writer where id=#{id}")
+    @Select("select * from writer where id=#{id} order by level asc")
     List<Writer> selectWritersById(String id);
     @Delete("delete from writer where id=#{paperId}")
     void deleteWriterByPaperId(String paperId);

@@ -64,7 +64,6 @@ public class PaperServiceImp implements PaperService{
             return false;
         }
         else{
-            //paper.setId(paper.getId());
             paper.setLike(paperMapper.selectLike(paper.getId()));
             paper.setThesisDate(paperMapper.selectPaperById(paper.getId()).getThesisDate());
             paperMapper.updateById(paper);

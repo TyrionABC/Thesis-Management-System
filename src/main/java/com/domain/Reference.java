@@ -36,6 +36,10 @@ public class Reference {
     public Reference() {
     }
 
+    public Reference(String id) {
+        this.id = id;
+    }
+
     public Reference(String id, String referPaperId) {
         this.id = id;
         this.referPaperId = referPaperId;

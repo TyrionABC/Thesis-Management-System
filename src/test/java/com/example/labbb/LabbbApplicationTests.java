@@ -251,7 +251,7 @@ class LabbbApplicationTests {
     }
     @Test
     void tt(){
-        System.out.println(paperService.getPaperOfMonth());
+        System.out.println(writerService.selectWriters("69d8cb3d-d"));
     }
 
 
