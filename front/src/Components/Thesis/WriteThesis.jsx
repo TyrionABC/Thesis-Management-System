@@ -1,11 +1,14 @@
 import React from 'react'
 // 引入编辑器组件
-import {Input, Space, Form, Select, Col, Row, Cascader, Button, DatePicker, Modal, Table, Tag} from 'antd';
+import {Input, Space, Form, Select, Col, Row, Cascader, Button, DatePicker, Modal, Table, Tag, Drawer} from 'antd';
 import BraftEditor from 'braft-editor'
 // 引入编辑器样式
 import 'braft-editor/dist/index.css'
 import axios from "axios";
 import { AntDesignOutlined, MinusCircleFilled, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { useLocation } from "react-router";
+import './Thesis.css';
+
 
 const {Option}=Select;
 const { Column, ColumnGroup } = Table;
@@ -20,8 +23,12 @@ export class WriteThesis extends React.Component {
         direction:[],
         arr:[],
         ref:[],
-        showRef:[]
+        showRef:[],
+        publisher: this.props.name,
+        publisherId: this.props.id,
+        visible: false,
     }
+
     componentDidMount () {
         // 假设此处从服务端获取html格式的编辑器内容
         let that=this;
@@ -39,36 +46,40 @@ export class WriteThesis extends React.Component {
         // 使用BraftEditor.createEditorState将html字符串转换为编辑器需要的editorStat
         that.setState({
             flag:0,
-            editorState: BraftEditor.createEditorState(htmlContent)
-        })
+            editorState: BraftEditor.createEditorState(htmlContent),
+        });
     }
     handleTitleChange=(value)=>{
         this.setState({
             title:value,
-        })
+        });
+        console.log(value);
     }
     onFinish=(value)=>{
         const htmlContent=this.state.editorState.toHTML();
-        axios({
+        let submitData = {
+            title:this.state.title,
+            text:htmlContent,
+            thesisType:value.thesisType,
+            direction:value.direction,
+            writers:value.writer,
+            publishMeeting:value.publishMeeting,
+            publishTime:value.publishTime,
+            referIds:this.state.ref,
+            flag:this.state.flag,
+            publisherId:this.state.publisherId,
+            publisher:this.state.publisher
+        };
+        console.log(submitData);
+        /*axios({
             method: 'post',
             url: 'http://localhost:8080/admin/input',
-            data:{title:this.state.title,
-                text:htmlContent,
-                thesisType:value.thesisType,
-                direction:value.direction,
-                writers:value.writer,
-                publishMeeting:value.publishMeeting,
-                publishTime:value.publishTime,
-                referIds:this.state.ref,
-                flag:this.state.flag,
-                publisherId:this.props.publisherId,
-                publisher:this.props.publisher
-                }
+            data: submitData,
         }).then(function(res) {
             console.log(res.data);
             if(res.data)alert("success");
             else alert("fail");
-        });
+        });*/
     }
     submitForm =(value)=>{
         console.log(value);
@@ -120,6 +131,14 @@ export class WriteThesis extends React.Component {
         this.setState({ editorState });
     }
 
+    showDrawer = () => {
+        this.setState({ visible: true })
+    };
+
+    onClose = () => {
+        this.setState({ visible: false })
+    };
+
     render () {
         /*const direction=[{
             label:'人工智能',
@@ -137,28 +156,10 @@ export class WriteThesis extends React.Component {
                 {label:'英文',value:'英文'}
             ]
         }];*/
-        const { editorState } = this.state
-        return (
-            <>
-            <Row>
-            <Col span={18}>
-            <div style={{width:900}}>
-                <Space direction='vertical' size="middle">
-                <div style={{marginTop:20}}>
-                    <Input placeholder='标题' style={{width:700}} onChange={this.handleTitleChange}></Input>
-                </div>
-                    <div className="my-component" style={{borderStyle:'solid',width:900,backgroundColor:'white' }}>
-                    <BraftEditor
-                        value={editorState}
-                        onChange={this.handleEditorChange}
-                    />
-                </div>
-                </Space>
-            </div>
-            </Col>
-            <Col span={6}>
-            <div style={{width:200,marginTop:20}}>
-                <Form 
+        const { editorState } = this.state;
+
+        const form = (<div style={{marginTop:20}}>
+            <Form
                 name="info"
                 layout='vertical'
                 //labelCol={{span:8,}}
@@ -167,193 +168,219 @@ export class WriteThesis extends React.Component {
                 onFinish={this.onFinish}
                 //onFinishFailed={onFinishFailed}
                 autoComplete="off"
-                >
-                    <Form.Item
+            >
+                <Form.Item
                     label="论文类型"
                     name="thesisType"
-                    >
-                        <Select allowClear style={{width:300}} >
-                            <Option value="理论证明型">理论证明型</Option>
-                            <Option value="综述性">综述性</Option>
-                            <Option value="实验型">实验型</Option>
-                            <Option value="工具型">工具型</Option>
-                            <Option value="数据集型">数据集型</Option>
-                        </Select>
-                    </Form.Item>
-                    <Form.Item
+                >
+                    <Select allowClear >
+                        <Option value="理论证明型">理论证明型</Option>
+                        <Option value="综述性">综述性</Option>
+                        <Option value="实验型">实验型</Option>
+                        <Option value="工具型">工具型</Option>
+                        <Option value="数据集型">数据集型</Option>
+                    </Select>
+                </Form.Item>
+                <Form.Item
                     label="研究方向"
                     name="direction">
-                        <Cascader allowClear options={this.state.direction} style={{width:300}} multiple />
-                    </Form.Item>
-                    <Form.List name="writer">
+                    <Cascader allowClear options={this.state.direction} multiple />
+                </Form.Item>
+                <Form.List name="writer">
                     {(fields,{add, remove})=>(
                         <>
                             {fields.map(({key, name,...restField})=>(
                                 <Space
-                                key={key}
-                                style={{display:'flex'}}
-                                align="baseline"
+                                    key={key}
+                                    style={{display:'flex'}}
+                                    align="baseline"
                                 >
                                     <Form.Item
-                                    label={"第"+(name+1)+"作者"}
-                                    {...restField}
-                                    name={name}
+                                        label={"第"+(name+1)+"作者"}
+                                        {...restField}
+                                        name={name}
                                     >
-                                        <Input style={{width:300}} id={name+1} />
+                                        <Input id={name+1} />
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={()=>remove(name)} />
                                 </Space>
                             ))}
-                            <Form.Item>
-                                <Button type="dashed" onClick={()=>add()} style={{width:200}} block icon={<PlusOutlined/>}>
-                                    添加作者
-                                </Button>
+                            <Form.Item label={"添加作者"}>
+                                <Button type="dashed" onClick={()=>add()} block icon={<PlusOutlined/>}/>
                             </Form.Item>
                         </>
                     )}
-                    </Form.List>
-                    <Form.Item
+                </Form.List>
+                <Form.Item
                     label="会议"
                     name="publishMeeting">
-                        <input style={{width:300}}></input>
-                    </Form.Item>
-                    <Form.Item
+                    <Input/>
+                </Form.Item>
+                <Form.Item
                     label="发表日期"
                     name="publishTime"
-                    >
-                        <DatePicker style={{width:300}}></DatePicker>
-                    </Form.Item>
-                    <Form.Item>
-                        <Button type="dashed" onClick={this.addReference}>
-                            添加引用
-                        </Button>
-                    </Form.Item>
-                    {
-                        this.state.showRef.map((item, index)=>(
+                >
+                    <DatePicker/>
+                </Form.Item>
+                <Form.Item label={"添加引用"}>
+                    <Button type="dashed" onClick={this.addReference} block icon={<PlusOutlined/>}/>
+                </Form.Item>
+                {
+                    this.state.showRef.map((item, index)=>(
                         <Space style={{display:'flex'}} align="baseline">
                             <Form.Item
-                            label={"引用"+(index+1)}>
-                                <Input style={{width:200}} value={item} readOnly/>
+                                label={"引用"+(index+1)}>
+                                <Input value={item} readOnly/>
                             </Form.Item>
                         </Space>
                     ))
-                    }
-                    <Modal 
+                }
+                <Modal
                     title="引用查询"
                     centered
                     visible={this.state.isSee}
                     onOk={()=>this.setState({isSee:false})}
                     onCancel={()=>this.setState({isSee:false})}
-                    width={1000}
+                    width="90%"
                     destroyOnClose>
-                        <Table dataSource={this.state.arr}>
-                        <ColumnGroup title="基本信息">
-                        <Column title="ID" dataIndex="id" key="id" />
-                        <Column title="标题" dataIndex="title" key="title" />
-                        <Column title="作者" dataIndex="writerName" key="writerName" />
-                        <Column
-                        title="研究方向"
-                        dataIndex="path"
-                        key="path"
-                        render={(tag => (
-                                <Tag color="blue" key={tag}>
-                                {tag}
-                                </Tag>
-                                )
-                            )}
-                        />
-                        <Column title="类型" dataIndex="thesisType" key="thesisType" />
-                        </ColumnGroup>
-                        <ColumnGroup title="发布">
-                        <Column title="发布人" dataIndex="publisher" key="publisher" />
-                        <Column title="发布会议" dataIndex="publishMeeting" key="publishMeeting" />
-                        </ColumnGroup>
-                        <Column
-                        title="操作"
-                        key="action"
-                        render={(_,record) => (
-                            <Space size="middle">
-                            <a style={{color:'green'}} onClick={()=>this.addRef(record.id, record.title)}>添加</ a>
-                            </Space>
-                        )}
-                        />
-                        </Table>
-                        <Form
-                        name="basic"
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
-                        initialValues={{ remember: true }}
-                        preserve={false}
-                        onFinish={this.submitForm}
-                        //onFinishFailed={}
-                        autoComplete="off"
-                        >
-                            <Form.Item
-                            label="论文标题"
-                            name="title"
+                    <Row>
+                        <Col span={8}>
+                            <div className="centering">
+                            <Form
+                                name="basic"
+                                labelCol={{ span: 4 }}
+                                initialValues={{ remember: true }}
+                                preserve={false}
+                                onFinish={this.submitForm}
+                                style={{margin: 5}}
+                                //onFinishFailed={}
+                                autoComplete="off"
                             >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                            label="研究方向"
-                            name="path"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                            label="论文类型"
-                            name="thesisType"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                            label="论文摘要"
-                            name="overview"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                            label="作者"
-                            name="writerName"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                            label="发布人"
-                            name="publisher"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                            label="会议"
-                            name="publishMeeting"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                                <Button type="primary" htmlType="submit">
-                                查询
-                                </Button>
-                            </Form.Item>
-                        </Form>
-                    </Modal>
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit" onClick={this.submitContent}>
-                            提交论文
-                        </Button>
-                    </Form.Item>
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit" onClick={this.submitFlag}>
-                            保存草稿
-                        </Button>
-                    </Form.Item>
-                </Form>
+                                <Form.Item
+                                    label="论文标题"
+                                    name="title"
+                                >
+                                    <Input />
+                                </Form.Item>
+                                <Form.Item
+                                    label="研究方向"
+                                    name="path"
+                                >
+                                    <Input />
+                                </Form.Item>
+                                <Form.Item
+                                    label="论文类型"
+                                    name="thesisType"
+                                >
+                                    <Input />
+                                </Form.Item>
+                                <Form.Item
+                                    label="论文摘要"
+                                    name="overview"
+                                >
+                                    <Input />
+                                </Form.Item>
+                                <Form.Item
+                                    label="作者"
+                                    name="writerName"
+                                >
+                                    <Input />
+                                </Form.Item>
+                                <Form.Item
+                                    label="发布人"
+                                    name="publisher"
+                                >
+                                    <Input />
+                                </Form.Item>
+                                <Form.Item
+                                    label="会议"
+                                    name="publishMeeting"
+                                >
+                                    <Input />
+                                </Form.Item>
+                                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                                    <Button type="primary" htmlType="submit">
+                                        查询
+                                    </Button>
+                                </Form.Item>
+                            </Form>
+                            </div>
+                        </Col>
+                        <Col span={16}>
+                            <div className="centering">
+                            <Table dataSource={this.state.arr} style={{margin: 5}}>
+                                <ColumnGroup title="基本信息">
+                                    <Column title="ID" dataIndex="id" key="id" />
+                                    <Column title="标题" dataIndex="title" key="title" />
+                                    <Column title="作者" dataIndex="writerName" key="writerName" />
+                                    <Column
+                                        title="研究方向"
+                                        dataIndex="path"
+                                        key="path"
+                                        render={(tag => (
+                                                <Tag color="blue" key={tag}>
+                                                    {tag}
+                                                </Tag>
+                                            )
+                                        )}
+                                    />
+                                    <Column title="类型" dataIndex="thesisType" key="thesisType" />
+                                </ColumnGroup>
+                                <ColumnGroup title="发布">
+                                    <Column title="发布人" dataIndex="publisher" key="publisher" />
+                                    <Column title="发布会议" dataIndex="publishMeeting" key="publishMeeting" />
+                                </ColumnGroup>
+                                <Column
+                                    title="操作"
+                                    key="action"
+                                    render={(_,record) => (
+                                        <Space size="middle">
+                                            <a style={{color:'green'}} onClick={()=>this.addRef(record.id, record.title)}>添加</ a>
+                                        </Space>
+                                    )}
+                                />
+                            </Table>
+                            </div>
+                        </Col>
+                    </Row>
+                </Modal>
+                <br/>
+                <Form.Item>
+                    <Button block ghost type="primary" htmlType="submit" onClick={this.submitFlag}>
+                        保存草稿
+                    </Button>
+                </Form.Item>
+                <Form.Item>
+                    <Button block type="primary" htmlType="submit" onClick={this.submitContent}>
+                        提交论文
+                    </Button>
+                </Form.Item>
+            </Form>
+        </div>);
+
+        return (
+            <>
+            <div className="site-layout-content">
+                <Space direction='vertical' size="middle">
+                <div style={{marginTop:20}}>
+                    <Input placeholder='标题' size={"large"} bordered={false} onChange={this.handleTitleChange}/>
+                </div>
+                    <div className="my-component" style={{backgroundColor:'white' }}>
+                    <BraftEditor
+                        value={editorState}
+                        onChange={this.handleEditorChange}
+                    />
+                </div>
+                </Space>
+                <div className="bottomElement">
+                    <Button type="primary" style={{width: "25%"}} onClick={this.showDrawer}>完成</Button>
+                </div>
             </div>
-            </Col>
-            </Row>
+                <Drawer title="提交论文" placement="right" onClose={this.onClose} visible={this.state.visible}>
+                    { form }
+                </Drawer>
             </>
         )
-
     }
 
 }

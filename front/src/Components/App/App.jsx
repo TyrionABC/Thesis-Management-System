@@ -31,8 +31,9 @@ import MyColumn from "../Thesis/MyColumn";
 import { BasicInfoSet } from "./Info";
 import './App.css';
 import { Link } from 'react-router-dom';
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import axios from "axios";
+import {WriteThesis} from "../Thesis/WriteThesis";
 
 const useStore = create(set => ({
   name: '',
@@ -60,7 +61,7 @@ function App() {
   change(permission);
   const nameChange = useStore(state => state.changeName);
   nameChange(username);
-  return <MainContent mail={mail}/>;
+  return <MainContent name={username} mail={mail}/>;
 }
 
 const { Content, Footer, Sider } = Layout;
@@ -69,7 +70,7 @@ function BottomPart() {
   const [bottom, setBottom] = useState(10);
   return <Affix offsetBottom={bottom}>
     <Tooltip title="新文章">
-      <Button type="primary" shape="circle" icon={<PlusOutlined />}
+      <Button type="primary" ghost shape="circle" icon={<PlusOutlined />}
               size="large" href="#" style={{ position: "absolute", bottom: 80, right: 80}}/>
     </Tooltip>
   </Affix>
@@ -235,6 +236,15 @@ function getItem(label, key, icon, children) {
   };
 }
 
+function Info() {
+  let name = useStore(state=>state.name);
+  let email = useStore(state=>state.email);
+  return {
+    publisher: name,
+    publisherId: email,
+  }
+}
+
 const items = [
   getItem('首页', '1', <CloudOutlined />),
   getItem('内容管理', 'sub1', <CopyOutlined />, [
@@ -252,13 +262,13 @@ const items = [
   getItem('文章搜索', '8', <SearchOutlined />),
 ];
 
-function setContent(id) {
+function setContent(id, name) {
   contents[0] = <Latest/>;
   contents[1] = <MyThesis id={id}/>;
   contents[2] = <MyColumn id={id}/>;
   contents[3] = <GetContentData id={id}/>;
   contents[4] = <GetUniversalData/>;
-  contents[5] = '';
+  contents[5] = <WriteThesis id={id} name={name}/>;
   contents[6] = <BasicInfoSet id={id}/>;
 }
 
@@ -268,6 +278,7 @@ class MainContent extends React.Component {
     num: 1,
     isFocus: false,
     id: this.props.mail,
+    username: this.props.name,
   };
 
   onCollapse = (collapsed) => {
@@ -283,16 +294,20 @@ class MainContent extends React.Component {
   onClick = (key) => {
     this.setState({num: key.key});
     if(key.key === '6') {
-      window.location.href = '/writing';
+      this.setState({
+        collapsed: true,
+      });
+      let ele = document.getElementById('logInfo');
+      ele.style.display='none';
     }
-    else if (key.key === '8') {
+    if (key.key === '8') {
       this.setState({ isFocus: !this.state.isFocus });
     }
   }
 
   render() {
     const { collapsed, num, isFocus } = this.state;
-    setContent(this.state.id);
+    setContent(this.state.id, this.state.username);
     return (
         <>
         <Layout
